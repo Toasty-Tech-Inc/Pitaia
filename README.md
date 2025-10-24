@@ -1,77 +1,186 @@
-# Pitaia
+# Diagrama Arquitetural Completo
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+**Resumo:** Este diagrama descreve a arquitetura que montamos para o projeto **Pitaia**: monorepo Nx com apps em Angular 20 (SSR) + Taiga UI, microserviços em Go (Gin + GORM) e Node/NestJS (Prisma) quando aplicável, mobile Ionic (Capacitor), infra provisionada com Pulumi, funções event-driven com Serverless Framework, RabbitMQ para filas, Redis para cache, PostgreSQL como banco primário, MongoDB para analytics/dashboards, observabilidade com Prometheus + Grafana + Jaeger e CI/CD orquestrado por Nx + GitHub Actions / Nx Cloud.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+---
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+## Funcionalidades do Projeto — Pitaia
 
-## Finish your CI setup
+**Funcionalidades principais:**
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/iWFXi5rseQ)
+- Sistema de controle de caixa
+- Sistema de ponto de venda (PDV)
+- Cardápio online para pedidos
+- Sistema de mesas e garçons
+- Controle de taxas de entrega e motoboys
+- CRUD de produtos
+- Cupons de desconto
+- Sistema de fidelidade
+- Controle de estoque
+- Cálculo de CMV
+- Relatórios de vendas, produtos e clientes
+- Formas de pagamento personalizadas
+- Pagamento online automatizado
+- Relatório de caixa
+- Sistema de encomendas
+- Emissão de notas fiscais
+- Impressão automática e manual de pedidos
 
+**Funcionalidades de IA:**
 
-## Run tasks
+- Cadastro automático de produtos (OCR / visão computacional + NLP para classificação)
+- Edição automática de produtos (sugestões de atributos, categorias, imagens)
+- Criar promoções e ofertas personalizadas com base em análise de vendas (modelos de recomendação)
+- Controle de valores flutuantes (preços dinâmicos / pricing engine)
+- Anotar pedidos via chat (assistente conversacional para anotações e extras)
 
-To run tasks with Nx use:
+**Integrações externas:**
 
-```sh
-npx nx <target> <project-name>
+- Agilizone e Repediu — controle de motoboys
+- Finanz — controle financeiro completo
+- iFood — recebimento de pedidos
+- Focus — emissão de notas fiscais
+
+---
+
+## Diagrama (Mermaid)
+
+```mermaid
+flowchart LR
+  subgraph Users[Usuários]
+    A[Browser (SEO) / Bot] -->|HTTP(s)| CDN[CDN (Cloudflare / CDN)]
+    M[Mobile (Ionic/Capacitor / PWA)] -->|HTTP(s) / WebSocket| CDN
+  end
+
+  CDN --> SSR[Angular 20 (SSR) + Taiga UI]
+  SSR --> APIGW[API Gateway / Load Balancer]
+
+  subgraph Backend[Back-end & Microservices]
+    APIGW --> NEST[NestJS (Prisma ORM — APIs de domínio / GraphQL / BFF)]
+    APIGW --> GO_MS[Go Services (Gin + GORM) — microserviços críticos]
+    NEST -->|RPC/HTTP/gRPC| GO_MS
+    GO_MS --> POSTGRES[(PostgreSQL) — Banco primário]
+    GO_MS -->|cache read/write| REDIS[(Redis) — Cache & Pub/Sub leve]
+    NEST --> AUTH[Auth Service (JWT / OAuth)]
+  end
+
+  subgraph Messaging[Mensageria & Jobs]
+    GO_MS -->|publish| RABBIT[(RabbitMQ) — Filas e entrega garantida]
+    NEST -->|publish| RABBIT
+    RABBIT --> WORKERS[Workers / ETL / Consumers]
+    WORKERS --> MONGO[(MongoDB) — Store para dashboards/relatórios]
+    WORKERS -->|update cache| REDIS
+  end
+
+  subgraph Serverless[Funções Serverless]
+    APIGW --> SLF[Serverless Functions (Lambda / Cloud Functions)]
+    SLF --> RABBIT
+    SLF --> MONGO
+  end
+
+  subgraph Observability[Observability]
+    GO_MS -->|/metrics| PROM[Prometheus (scrape)]
+    NEST -->|/metrics| PROM
+    SLF -->|OTel/Traces| JAEGER[Jaeger (Collector)]
+    GO_MS -->|OTel/Traces| JAEGER
+    NEST -->|OTel/Traces| JAEGER
+
+    PROM --> GRAF[Grafana (dashboards + alertas)]
+    JAEGER --> GRAF
+    LOGS[(Structured logs -> Loki optional)] --> GRAF
+  end
+
+  subgraph Infra[Infra Estruturada]
+    PULUMI[Pulumi] ---|provisiona| CLOUD[Cloud (AWS/GCP/Azure)]
+    PULUMI ---|provisiona| RABBIT
+    PULUMI ---|provisiona| POSTGRES
+    PULUMI ---|provisiona| MONGO
+    PULUMI ---|provisiona| REDIS
+    PULUMI ---|provisiona| PROM
+    PULUMI ---|provisiona| JAEGER
+    PULUMI ---|provisiona| GRAF
+  end
+
+  subgraph DevOps[Monorepo & CI/CD]
+    NX[Nx Monorepo (apps/libs/go work)] -->|orquestra| CI[GitHub Actions / GitLab CI]
+    NX -->|cache| NXCLOUD[Nx Cloud]
+    CI -->|nx affected| PULUMI
+    CI -->|nx affected| SLF
+    CI -->|build| DOCKER[Docker / Buildx]
+    DOCKER -->|push| REG[Registry (ECR/GCR/ACR)]
+    REG -->|deploy| CLOUD
+  end
+
+  %% Cross links
+  M --> APIGW
+  SSR -->|realtime| WS[WebSocket / Socket.IO / WebSocket Gateway]
+  WS --> GO_MS
+  WORKERS -->|ETL| MONGO
+  POSTGRES -->|logical replication / CDC| WORKERS
+
 ```
 
-For example:
+---
 
-```sh
-npx nx build myproject
-```
+## Componentes e Responsabilidades
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+- **Angular 20 (SSR) + Taiga UI**: frontend público com Server-Side Rendering para SEO. Pode ser hospedado em Vercel (SSR) ou em infra própria (Node server ou container). PWA compatível para melhorar indexação e experiência.
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- **Nx Monorepo**: organiza `apps/` e `libs/`, coordena builds, affected commands, caching (Nx Cloud) e integra executors customizados para Go, Pulumi e Serverless.
 
-## Add new projects
+- **Go (Gin + GORM)**: microserviços críticos focados em performance (autenticação crítica, billing, gateways, processamento em tempo real). Compilados em binários para execução em containers/instances.
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
+- **NestJS (Prisma ORM)**: BFF / API de domínio quando for útil aproveitar decorators, GraphQL e integração rápida com ecossistema Node. Pode coexistir com Go.
 
-To install a new plugin you can use the `nx add` command. Here's an example of adding the React plugin:
-```sh
-npx nx add @nx/react
-```
+- **PostgreSQL**: fonte de verdade para dados transacionais, ACID, JSONB quando precisar de flexibilidade.
 
-Use the plugin's generator to create new projects. For example, to create a new React app or library:
+- **MongoDB**: armazena documentos otimizados para dashboards e relatórios (ETL atualizado por workers consumidores das filas ou por CDC).
 
-```sh
-# Generate an app
-npx nx g @nx/react:app demo
+- **Redis**: cache de leitura (HTTP cache, session store, rate limiting), pub/sub leve, TTLs para manter performance.
 
-# Generate a library
-npx nx g @nx/react:lib some-lib
-```
+- **RabbitMQ**: filas com garantia de entrega (tasks demoradas, processamento assíncrono, orquestração de workflows). Preferível para flows que requerem confirmações e requeues.
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+- **Serverless Framework**: funções event-driven (webhooks, triggers) isoladas, deploys independentes (stages), integradas ao Nx como targets.
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- **Pulumi**: IaC para provisionar VPC, serviços gerenciados (RDS, ElastiCache, DocumentDB/Mongo Atlas), collectors (Prometheus, Jaeger) e configurações de infra.
 
+- **Prometheus + Grafana + Jaeger**: observabilidade completa — métricas (Prometheus scrapes `/metrics`), traces (OpenTelemetry → Jaeger), dashboards e alertas (Grafana). Logs estruturados enviados a Loki (opcional) para correlação.
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- **CI/CD**: GitHub Actions (ou GitLab CI) com comandos Nx (`nx affected --target=build`, `nx affected --target=deploy`), Pulumi deploys e Serverless deploys. Cache distribuído via Nx Cloud.
 
-## Install Nx Console
+---
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+## Fluxos principais (resumidos)
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+1. **Requisição Web (SEO)**
+   - Usuário/Bot → CDN → Angular SSR → API Gateway → NEST / Go → Postgres (write) / Redis (read cache)
+   - Traces instrumentados com OpenTelemetry → Jaeger; métricas expostas em `/metrics` → Prometheus → Grafana
 
-## Useful links
+2. **Processamento Assíncrono / Filas**
+   - Serviço escreve no Postgres → publica evento em RabbitMQ → Workers consomem → atualizam MongoDB (documentos otimizados) e limpam/atualizam cache Redis
 
-Learn more:
+3. **Serverless / Event-driven**
+   - Webhook / evento externo → Serverless Function → validação / publicação em RabbitMQ → worker ou atualização direta no MongoDB
 
-- [Learn more about this workspace setup](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+4. **ETL para dashboards**
+   - Workers (consumidores) aplicam transformações/denormalizações e gravam em MongoDB; dashboards consultam Mongo diretamente para agregações
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+5. **CI/CD & Infra**
+   - Push na main/branches → GitHub Actions → `nx affected` → builds, testes e `pulumi up` ou `serverless deploy` conforme impacto.
+
+---
+
+## Boas práticas e recomendações técnicas
+
+- **Eventos idempotentes**: garantir idempotência nos consumers (use dedupe keys / message IDs).
+- **Schema para eventos**: padronizar via Protobuf/Avro/JSON Schema; versionamento de eventos.
+- **CDC (Change Data Capture)**: considere usar logical replication (Debezium ou listener) se quiser consistência forte entre Postgres → MongoDB.
+- **Cache strategy**: cache-aside + invalidation via eventos (quando dados mudam, publish invalidation para Redis).
+- **Tracing**: amostragem adaptativa (ex: 1% full traces + aumento em erros) para reduzir custo de armazenamento.
+- **Métricas**: exporte histograms (p50/p95/p99), counters (requests, errors) e gauges (goroutines, heap).
+- **Segurança**: segmente redes (VPCs), use IAM roles, encrypt at rest e in transit, rotate secrets (Vault / Secrets Manager).
+- **Backups**: backups automatizados do Postgres e snapshots do Mongo; testes de restore regulares.
+- **Observability as code**: versionar dashboards (Grafana provisioning) e alertas junto com infra.
+- **Monorepo ergonomics**: usar `go.work` para múltiplos módulos Go e configurar executors Nx para `go test`, `go build` e `go vet`.
+
+---
