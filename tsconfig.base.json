@@ -14,7 +14,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@pitaia/ui": ["libs/shared/ui/src/index.ts"],
+      "@pitaia/types": ["libs/shared/types/src/index.ts"],
+      "@pitaia/utils": ["libs/shared/utils/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

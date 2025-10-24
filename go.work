@@ -1,0 +1,1 @@
+go 1.21echo.echo use (echo     ./services/go/billing-serviceecho     ./services/go/realtime-serviceecho     ./services/go/gateway-serviceecho )
