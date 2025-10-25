@@ -1,0 +1,89 @@
+<form
+    tuiAppearance="floating"
+    tuiCardLarge
+    tuiForm="m"
+    [formGroup]="form"
+    [style.max-width.rem]="32"
+>
+    <header tuiHeader>
+        <h2 tuiTitle>
+            Acesse o Pitaia!
+            <span tuiSubtitle>Login</span>
+        </h2>
+        <span tuiAccessories>
+            <tui-segmented>
+                <label>
+                    <input
+                        formControlName="basic"
+                        type="radio"
+                        [value]="true"
+                    />
+                    Brief
+                </label>
+                <label>
+                    <input
+                        formControlName="basic"
+                        type="radio"
+                        [value]="false"
+                    />
+                    Detailed
+                </label>
+            </tui-segmented>
+        </span>
+    </header>
+    <tui-notification appearance="info">
+        <h3 tuiTitle>
+            Acesse com seus dados de login
+            <span tuiSubtitle>Use senhas seguras e não as compartilhe!</span>
+        </h3>
+    </tui-notification>
+    <tui-textfield>
+        <label for="name" tuiLabel>Nome</label>
+        <input
+            formControlName="name"
+            placeholder="Johnny Picolo"
+            tuiTextfield
+        />
+    </tui-textfield>
+    <tui-error
+        formControlName="name"
+        [error]="[] | tuiFieldError | async"
+    />
+    <ng-container *ngIf="!form.controls.basic.value">
+        <tui-textfield>
+            <label for="name" tuiLabel>Email</label>
+            <input
+                formControlName="email"
+                placeholder="johnny@toastytech.com.br"
+                tuiTextfield
+                type="email"
+            />
+        </tui-textfield>
+        <label tuiLabel>
+            <input
+                formControlName="subscribe"
+                tuiSwitch
+                type="checkbox"
+            />
+            Manter conectado
+            <tui-icon tuiTooltip="We will not send you spam, pinky promise!" />
+        </label>
+    </ng-container>
+    <footer>
+        <button
+            appearance="secondary"
+            tuiButton
+            type="button"
+            class="button-cancel"
+        >
+            Cancelar
+        </button>
+        <button
+            tuiButton
+            type="submit"
+            class="button-access"
+        >
+            Entrar
+        </button>
+    </footer>
+</form>
