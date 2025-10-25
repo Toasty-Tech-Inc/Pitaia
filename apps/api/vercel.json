@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "name": "pitaia-api",
+  "builds": [
+    {
+      "src": "src/serverless.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/serverless.ts"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

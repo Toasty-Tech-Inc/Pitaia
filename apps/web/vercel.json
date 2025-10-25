@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "name": "pitaia-web",
+  "buildCommand": "nx build web --configuration=production",
+  "outputDirectory": "dist/apps/web/browser",
+  "devCommand": "nx serve web",
+  "framework": "angular",
+  "routes": [
+    {
+      "src": "/.*\\.(css|js|json|ico|png|jpg|jpeg|svg|gif|woff|woff2|ttf|eot)",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "pitaia-monorepo",
+  "regions": ["iad1"],
+  "github": {
+    "silent": true
+  },
+  "buildCommand": "nx run-many --target=build --projects=web,admin,menu,api --configuration=production",
+  "outputDirectory": "dist"
+}
