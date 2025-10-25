@@ -18,10 +18,16 @@
         "assets": [
           {
             "glob": "**/*",
-            "input": "apps/web/public"
+            "input": "apps/web/public",
+            
+            "output": "assets/taiga-ui/icons"
           }
         ],
-        "styles": ["apps/web/src/styles.scss"]
+        "styles": [
+          "apps/web/src/styles.scss",
+          "@taiga-ui/core/styles/taiga-ui-theme.less",
+          "@taiga-ui/core/styles/taiga-ui-fonts.less"
+        ]
       },
       "configurations": {
         "production": {

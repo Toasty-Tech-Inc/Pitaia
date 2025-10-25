@@ -1,0 +1,16 @@
+:host{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.button-cancel{
+    background-color: #FE3867;
+    color: white;
+}
+
+.button-access{
+    background-color: #01C798;
+    color: white;
+}
