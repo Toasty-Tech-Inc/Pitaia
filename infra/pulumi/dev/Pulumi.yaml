@@ -1,0 +1,7 @@
+name: pitaia-dev
+description: Pitaia Infrastructure - Dev
+runtime: nodejs
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: typescript

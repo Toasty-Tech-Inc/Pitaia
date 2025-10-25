@@ -1,0 +1,10 @@
+name: pitaia-prod
+description: Pitaia Infrastructure - Prod
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: typescript

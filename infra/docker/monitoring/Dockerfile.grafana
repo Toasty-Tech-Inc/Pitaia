@@ -1,0 +1,9 @@
+FROM grafana/grafana:latest
+
+COPY datasources.yml /etc/grafana/provisioning/datasources/datasources.yml
+COPY dashboards.yml /etc/grafana/provisioning/dashboards/dashboards.yml
+
+EXPOSE 3000
+
+ENV GF_SECURITY_ADMIN_PASSWORD=admin
+ENV GF_USERS_ALLOW_SIGN_UP=false

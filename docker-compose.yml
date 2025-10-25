@@ -1,0 +1,120 @@
+version: '3.8'
+
+services:
+  # Databases
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: pitaia
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - pitaia_network
+      
+  mongodb:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - pitaia_network
+      
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - pitaia_network
+      
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - pitaia_network
+      
+  # Monitoring
+  prometheus:
+    build:
+      context: ./infra/docker/monitoring
+      dockerfile: Dockerfile.prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - prometheus_data:/prometheus
+    networks:
+      - pitaia_network
+      
+  grafana:
+    build:
+      context: ./infra/docker/monitoring
+      dockerfile: Dockerfile.grafana
+    ports:
+      - '3001:3000'
+    depends_on:
+      - prometheus
+    networks:
+      - pitaia_network
+      
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - '16686:16686'
+      - '14268:14268'
+    networks:
+      - pitaia_network
+      
+  # Nginx
+  nginx:
+    build: ./infra/docker/nginx
+    ports:
+      - '80:80'
+    depends_on:
+      - api
+    networks:
+      - pitaia_network
+      
+  # API (NestJS) - opcional, criar depois
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: apps/api/Dockerfile
+  #   environment:
+  #     DATABASE_URL: postgresql://admin:admin123@postgres:5432/pitaia
+  #     REDIS_URL: redis://redis:6379
+  #     RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #     - rabbitmq
+  #   networks:
+  #     - pitaia_network
+
+volumes:
+  postgres_data:
+  mongo_data:
+  redis_data:
+  rabbitmq_data:
+  prometheus_data:
+
+networks:
+  pitaia_network:
+    driver: bridge
