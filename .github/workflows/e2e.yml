@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        project: [web-e2e, menu-e2e, admin-e2e]
+        project: [web-e2e, menu-e2e, dashboard-e2e, api-e2e, mobile-e2e]
       fail-fast: true
       
     steps:
