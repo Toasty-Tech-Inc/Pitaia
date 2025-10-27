@@ -47,6 +47,10 @@ jobs:
       - name: Build affected projects
         run: pnpm exec nx affected -t build --parallel=3 --configuration=production
 
+      - name: Run fix ci
+        run: pnpm exec nx fix-ci
+        if: always()
+
       - name: Upload coverage
         if: always()
         uses: codecov/codecov-action@v3
