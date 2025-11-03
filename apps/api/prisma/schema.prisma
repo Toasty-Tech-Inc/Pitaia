@@ -1,0 +1,823 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String?    @unique
+  password      String
+  name          String
+  cpf           String?   @unique
+  phone         String?
+  avatar        String?
+  role          UserRole  @default(CASHIER)
+  isActive      Boolean   @default(true)
+  lastLogin     DateTime?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  establishments EstablishmentUser[]
+  cashierSessions CashierSession[]
+  orders         Order[]
+  salesMade      Sale[]
+  activityLogs   ActivityLog[]
+  
+  @@map("users")
+}
+
+enum UserRole {
+  OWNER
+  MANAGER
+  CASHIER
+  WAITER
+  KITCHEN
+  DELIVERY
+}
+
+model Establishment {
+  id              String    @id @default(uuid())
+  name            String
+  tradeName       String?
+  cnpj            String?   @unique
+  email           String
+  phone           String
+  logo            String?
+  
+  street          String
+  number          String
+  complement      String?
+  neighborhood    String
+  city            String
+  state           String
+  zipCode         String
+  latitude        Decimal?  @db.Decimal(10, 8)
+  longitude       Decimal?  @db.Decimal(11, 8)
+  
+  isActive        Boolean   @default(true)
+  timezone        String    @default("America/Sao_Paulo")
+  currency        String    @default("BRL")
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  users           EstablishmentUser[]
+  products        Product[]
+  categories      Category[]
+  orders          Order[]
+  sales           Sale[]
+  cashierSessions CashierSession[]
+  tables          Table[]
+  paymentMethods  PaymentMethod[]
+  integrations    Integration[]
+  
+  @@map("establishments")
+}
+
+model EstablishmentUser {
+  id               String        @id @default(uuid())
+  establishmentId  String
+  userId           String
+  role             UserRole
+  
+  establishment    Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt        DateTime      @default(now())
+  
+  @@unique([establishmentId, userId])
+  @@map("establishment_users")
+}
+
+model Category {
+  id               String        @id @default(uuid())
+  establishmentId  String
+  name             String
+  description      String?
+  image            String?
+  sortOrder        Int           @default(0)
+  isActive         Boolean       @default(true)
+  
+  parentId         String?
+  parent           Category?     @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children         Category[]    @relation("CategoryHierarchy")
+  
+  establishment    Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  products         Product[]
+  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  
+  @@map("categories")
+}
+
+model Product {
+  id               String        @id @default(uuid())
+  establishmentId  String
+  categoryId       String?
+  
+  name             String
+  description      String?
+  sku              String?       @unique
+  barcode          String?
+  
+  price            Decimal       @db.Decimal(10, 2)
+  cost             Decimal?      @db.Decimal(10, 2)
+  
+  trackInventory   Boolean       @default(false)
+  currentStock     Decimal?      @db.Decimal(10, 3)
+  minStock         Decimal?      @db.Decimal(10, 3)
+  maxStock         Decimal?      @db.Decimal(10, 3)
+  unit             String?       // un, kg, l, etc
+  
+  images           String[]
+  primaryImage     String?
+  
+  isActive         Boolean       @default(true)
+  isAvailable      Boolean       @default(true)
+  isFeatured       Boolean       @default(false)
+  preparationTime  Int?          // em minutos
+  
+  aiGenerated      Boolean       @default(false)
+  aiConfidence     Decimal?      @db.Decimal(5, 2)
+  tags             String[]
+  
+  establishment    Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  category         Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  
+  orderItems       OrderItem[]
+  saleItems        SaleItem[]
+  modifiers        ProductModifier[]
+  stockMovements   StockMovement[]
+  dynamicPrices    DynamicPrice[]
+  combos           ComboProduct[]
+  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  
+  @@index([establishmentId, categoryId])
+  @@map("products")
+}
+
+model ProductModifier {
+  id          String   @id @default(uuid())
+  productId   String
+  name        String
+  type        ModifierType
+  isRequired  Boolean  @default(false)
+  minChoices  Int      @default(0)
+  maxChoices  Int?
+  
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  options     ModifierOption[]
+  
+  @@map("product_modifiers")
+}
+
+enum ModifierType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  QUANTITY
+}
+
+model ModifierOption {
+  id          String          @id @default(uuid())
+  modifierId  String
+  name        String
+  price       Decimal         @db.Decimal(10, 2)
+  isDefault   Boolean         @default(false)
+  
+  modifier    ProductModifier @relation(fields: [modifierId], references: [id], onDelete: Cascade)
+  
+  @@map("modifier_options")
+}
+
+model ComboProduct {
+  id          String   @id @default(uuid())
+  productId   String
+  comboId     String
+  quantity    Int      @default(1)
+  
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@map("combo_products")
+}
+
+
+model StockMovement {
+  id               String        @id @default(uuid())
+  productId        String
+  
+  type             StockMovementType
+  quantity         Decimal       @db.Decimal(10, 3)
+  reason           String?
+  reference        String?
+  
+  previousStock    Decimal       @db.Decimal(10, 3)
+  newStock         Decimal       @db.Decimal(10, 3)
+  
+  product          Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  createdAt        DateTime      @default(now())
+  
+  @@index([productId, createdAt])
+  @@map("stock_movements")
+}
+
+enum StockMovementType {
+  PURCHASE    
+  SALE          
+  ADJUSTMENT   
+  TRANSFER     
+  LOSS          
+  RETURN
+}
+
+model Order {
+  id               String        @id @default(uuid())
+  establishmentId  String
+  customerId       String?
+  waiterId         String?
+  tableId          String?
+  
+  orderNumber      Int
+  
+  type             OrderType
+  source           OrderSource   @default(POS)
+  
+  status           OrderStatus   @default(PENDING)
+  
+  subtotal         Decimal       @db.Decimal(10, 2)
+  discount         Decimal       @db.Decimal(10, 2) @default(0)
+  deliveryFee      Decimal       @db.Decimal(10, 2) @default(0)
+  serviceFee       Decimal       @db.Decimal(10, 2) @default(0)
+  total            Decimal       @db.Decimal(10, 2)
+  
+  couponId         String?
+  
+  deliveryAddress  Json?
+  deliveryTime     DateTime?
+  deliveryPersonId String?
+  
+  notes            String?
+  kitchenNotes     String?
+  
+  externalId       String?
+  externalSource   String?
+  
+  establishment    Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  customer         Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  waiter           User?         @relation(fields: [waiterId], references: [id], onDelete: SetNull)
+  table            Table?        @relation(fields: [tableId], references: [id], onDelete: SetNull)
+  coupon           Coupon?       @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  
+  items            OrderItem[]
+  sale             Sale?
+  statusHistory    OrderStatusHistory[]
+  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  
+  @@unique([establishmentId, orderNumber, createdAt])
+  @@index([establishmentId, status, createdAt])
+  @@map("orders")
+}
+
+enum OrderType {
+  DINE_IN
+  TAKEOUT
+  DELIVERY
+  CUSTOM
+}
+
+enum OrderSource {
+  POS
+  ONLINE
+  MOBILE
+  IFOOD
+  RAPPI
+  WHATSAPP
+  PHONE
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING 
+  READY
+  DELIVERING
+  COMPLETED
+  CANCELLED
+}
+
+model OrderStatusHistory {
+  id          String      @id @default(uuid())
+  orderId     String
+  status      OrderStatus
+  notes       String?
+  
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime    @default(now())
+  
+  @@map("order_status_history")
+}
+
+model OrderItem {
+  id               String    @id @default(uuid())
+  orderId          String
+  productId        String
+  
+  quantity         Decimal   @db.Decimal(10, 3)
+  unitPrice        Decimal   @db.Decimal(10, 2)
+  subtotal         Decimal   @db.Decimal(10, 2)
+  discount         Decimal   @db.Decimal(10, 2) @default(0)
+  total            Decimal   @db.Decimal(10, 2)
+  
+  modifiers        Json?
+  notes            String?
+  
+  order            Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product          Product   @relation(fields: [productId], references: [id], onDelete: Restrict)
+  
+  @@map("order_items")
+}
+
+model Sale {
+  id               String        @id @default(uuid())
+  establishmentId  String
+  orderId          String        @unique
+  customerId       String?
+  sellerId         String
+  cashierSessionId String?
+  
+  subtotal         Decimal       @db.Decimal(10, 2)
+  discount         Decimal       @db.Decimal(10, 2) @default(0)
+  total            Decimal       @db.Decimal(10, 2)
+  paid             Decimal       @db.Decimal(10, 2) @default(0)
+  change           Decimal       @db.Decimal(10, 2) @default(0)
+  
+  paymentStatus    PaymentStatus @default(PENDING)
+  
+  invoiceId        String?
+  invoiceNumber    String?
+  invoiceUrl       String?
+  
+  establishment    Establishment  @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  order            Order          @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  customer         Customer?      @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  seller           User           @relation(fields: [sellerId], references: [id], onDelete: Restrict)
+  cashierSession   CashierSession? @relation(fields: [cashierSessionId], references: [id], onDelete: SetNull)
+  
+  items            SaleItem[]
+  payments         Payment[]
+  loyaltyTransactions LoyaltyTransaction[]
+  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  
+  @@index([establishmentId, createdAt])
+  @@index([customerId, createdAt])
+  @@map("sales")
+}
+
+enum PaymentStatus {
+  PENDING
+  PARTIAL
+  PAID
+  REFUNDED
+}
+
+model SaleItem {
+  id          String   @id @default(uuid())
+  saleId      String
+  productId   String
+  
+  quantity    Decimal  @db.Decimal(10, 3)
+  unitPrice   Decimal  @db.Decimal(10, 2)
+  unitCost    Decimal? @db.Decimal(10, 2)
+  subtotal    Decimal  @db.Decimal(10, 2)
+  discount    Decimal  @db.Decimal(10, 2) @default(0)
+  total       Decimal  @db.Decimal(10, 2)
+  
+  sale        Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  
+  @@map("sale_items")
+}
+
+model PaymentMethod {
+  id               String        @id @default(uuid())
+  establishmentId  String
+  
+  name             String
+  type             PaymentType
+  isActive         Boolean       @default(true)
+  
+  requiresChange   Boolean       @default(false)
+  hasFee           Boolean       @default(false)
+  feePercentage    Decimal?      @db.Decimal(5, 2)
+  feeFixed         Decimal?      @db.Decimal(10, 2)
+  
+  gatewayId        String?
+  gatewayConfig    Json?
+  
+  establishment    Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  payments         Payment[]
+  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  
+  @@map("payment_methods")
+}
+
+enum PaymentType {
+  CASH
+  DEBIT_CARD
+  CREDIT_CARD
+  PIX
+  VOUCHER
+  BANK_TRANSFER
+  OTHER
+}
+
+model Payment {
+  id               String        @id @default(uuid())
+  saleId           String
+  paymentMethodId  String
+  
+  amount           Decimal       @db.Decimal(10, 2)
+  status           PaymentStatus @default(PENDING)
+  
+  // Dados da transação
+  transactionId    String?
+  authorizationCode String?
+  
+  // Parcelamento
+  installments     Int           @default(1)
+  
+  // Integração com gateway
+  gatewayResponse  Json?
+  
+  sale             Sale          @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  paymentMethod    PaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Restrict)
+  
+  createdAt        DateTime      @default(now())
+  
+  @@index([saleId])
+  @@map("payments")
+}
+
+// ============================================
+// CAIXA
+// ============================================
+
+model CashierSession {
+  id               String        @id @default(uuid())
+  establishmentId  String
+  userId           String
+  
+  openingAmount    Decimal       @db.Decimal(10, 2)
+  closingAmount    Decimal?      @db.Decimal(10, 2)
+  expectedAmount   Decimal?      @db.Decimal(10, 2)
+  difference       Decimal?      @db.Decimal(10, 2)
+  
+  openedAt         DateTime      @default(now())
+  closedAt         DateTime?
+  
+  notes            String?
+  
+  establishment    Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  user             User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+  
+  sales            Sale[]
+  movements        CashMovement[]
+  
+  @@index([establishmentId, openedAt])
+  @@map("cashier_sessions")
+}
+
+model CashMovement {
+  id               String         @id @default(uuid())
+  cashierSessionId String
+  
+  type             CashMovementType
+  amount           Decimal        @db.Decimal(10, 2)
+  reason           String
+  notes            String?
+  
+  cashierSession   CashierSession @relation(fields: [cashierSessionId], references: [id], onDelete: Cascade)
+  
+  createdAt        DateTime       @default(now())
+  
+  @@map("cash_movements")
+}
+
+enum CashMovementType {
+  DEPOSIT     // Depósito/Sangria
+  WITHDRAWAL  // Retirada/Suprimento
+  ADJUSTMENT  // Ajuste
+}
+
+// ============================================
+// CLIENTES E FIDELIDADE
+// ============================================
+
+model Customer {
+  id          String    @id @default(uuid())
+  
+  // Dados pessoais
+  name        String
+  email       String?
+  phone       String    @unique
+  cpf         String?   @unique
+  birthDate   DateTime?
+  
+  // Endereço principal
+  address     Json?     // {street, number, neighborhood, city, etc}
+  
+  // Fidelidade
+  loyaltyPoints Int     @default(0)
+  
+  isActive    Boolean   @default(true)
+  
+  orders      Order[]
+  sales       Sale[]
+  addresses   CustomerAddress[]
+  loyaltyTransactions LoyaltyTransaction[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([phone])
+  @@index([email])
+  @@map("customers")
+}
+
+model CustomerAddress {
+  id           String    @id @default(uuid())
+  customerId   String
+  
+  label        String?   // "Casa", "Trabalho", etc
+  street       String
+  number       String
+  complement   String?
+  neighborhood String
+  city         String
+  state        String
+  zipCode      String
+  reference    String?
+  
+  isDefault    Boolean   @default(false)
+  
+  customer     Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  @@map("customer_addresses")
+}
+
+model LoyaltyTransaction {
+  id          String    @id @default(uuid())
+  customerId  String
+  saleId      String?
+  
+  type        LoyaltyTransactionType
+  points      Int
+  description String?
+  
+  expiresAt   DateTime?
+  
+  customer    Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  sale        Sale?     @relation(fields: [saleId], references: [id], onDelete: SetNull)
+  
+  createdAt   DateTime  @default(now())
+  
+  @@index([customerId, createdAt])
+  @@map("loyalty_transactions")
+}
+
+enum LoyaltyTransactionType {
+  EARNED      // Ganhou pontos
+  REDEEMED    // Resgatou pontos
+  EXPIRED     // Pontos expirados
+  ADJUSTED    // Ajuste manual
+}
+
+// ============================================
+// CUPONS E PROMOÇÕES
+// ============================================
+
+model Coupon {
+  id               String      @id @default(uuid())
+  
+  code             String      @unique
+  description      String?
+  
+  // Tipo de desconto
+  discountType     DiscountType
+  discountValue    Decimal     @db.Decimal(10, 2)
+  
+  // Limites
+  minPurchase      Decimal?    @db.Decimal(10, 2)
+  maxDiscount      Decimal?    @db.Decimal(10, 2)
+  usageLimit       Int?
+  usageCount       Int         @default(0)
+  perCustomerLimit Int?
+  
+  // Validade
+  validFrom        DateTime
+  validUntil       DateTime?
+  
+  // Configurações
+  isActive         Boolean     @default(true)
+  isPublic         Boolean     @default(false)
+  
+  // IA: gerado automaticamente
+  aiGenerated      Boolean     @default(false)
+  aiReason         String?
+  
+  orders           Order[]
+  
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  
+  @@index([code])
+  @@index([validFrom, validUntil])
+  @@map("coupons")
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+// ============================================
+// PREÇOS DINÂMICOS (IA)
+// ============================================
+
+model DynamicPrice {
+  id          String    @id @default(uuid())
+  productId   String
+  
+  // Contexto do preço dinâmico
+  dayOfWeek   Int?      // 0-6 (domingo-sábado)
+  startTime   String?   // HH:MM
+  endTime     String?   // HH:MM
+  
+  // Preço ajustado
+  price       Decimal   @db.Decimal(10, 2)
+  adjustment  Decimal   @db.Decimal(5, 2) // Percentual de ajuste
+  
+  // IA
+  reason      String?   // Motivo do ajuste (demanda, estoque, etc)
+  confidence  Decimal   @db.Decimal(5, 2)
+  
+  isActive    Boolean   @default(true)
+  
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@map("dynamic_prices")
+}
+
+// ============================================
+// MESAS E GARÇONS
+// ============================================
+
+model Table {
+  id               String        @id @default(uuid())
+  establishmentId  String
+  
+  number           String
+  capacity         Int
+  location         String?       // "Salão", "Varanda", etc
+  
+  status           TableStatus   @default(AVAILABLE)
+  isActive         Boolean       @default(true)
+  
+  // QR Code para pedidos
+  qrCode           String?       @unique
+  
+  establishment    Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  orders           Order[]
+  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  
+  @@unique([establishmentId, number])
+  @@map("tables")
+}
+
+enum TableStatus {
+  AVAILABLE
+  OCCUPIED
+  RESERVED
+  CLEANING
+}
+
+// ============================================
+// INTEGRAÇÕES EXTERNAS
+// ============================================
+
+model Integration {
+  id               String        @id @default(uuid())
+  establishmentId  String
+  
+  name             String
+  type             IntegrationType
+  
+  // Credenciais (criptografadas)
+  credentials      Json
+  
+  // Configurações específicas
+  config           Json?
+  
+  isActive         Boolean       @default(true)
+  lastSync         DateTime?
+  
+  establishment    Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  logs             IntegrationLog[]
+  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  
+  @@unique([establishmentId, type])
+  @@map("integrations")
+}
+
+enum IntegrationType {
+  IFOOD
+  RAPPI
+  AGILIZONE
+  REPEDIU
+  FINANZ
+  FOCUS_NFE
+}
+
+model IntegrationLog {
+  id             String       @id @default(uuid())
+  integrationId  String
+  
+  action         String
+  status         String
+  request        Json?
+  response       Json?
+  error          String?
+  
+  integration    Integration  @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  
+  createdAt      DateTime     @default(now())
+  
+  @@index([integrationId, createdAt])
+  @@map("integration_logs")
+}
+
+// ============================================
+// RELATÓRIOS E ANALYTICS
+// ============================================
+
+model ActivityLog {
+  id          String    @id @default(uuid())
+  userId      String
+  
+  action      String
+  entity      String
+  entityId    String?
+  changes     Json?
+  ipAddress   String?
+  userAgent   String?
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime  @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([entity, entityId])
+  @@map("activity_logs")
+}
+
+// ============================================
+// CONFIGURAÇÕES E PARÂMETROS
+// ============================================
+
+model SystemConfig {
+  id          String    @id @default(uuid())
+  key         String    @unique
+  value       Json
+  description String?
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@map("system_configs")
+}
