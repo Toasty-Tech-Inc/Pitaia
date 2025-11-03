@@ -28,6 +28,7 @@ import { RolesGuard } from '../../../common/guards/roles.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
 import { UserRole } from '@prisma/client';
+import { Public } from '../../../common/decorators/public.decorator';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -37,7 +38,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  @Roles(UserRole.OWNER, UserRole.MANAGER)
+  @Public()
   @ApiOperation({ summary: 'Criar novo usuário' })
   @ApiResponse({ status: 201, description: 'Usuário criado com sucesso' })
   @ApiResponse({ status: 409, description: 'Email, CPF ou telefone já cadastrado' })
