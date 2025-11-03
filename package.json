@@ -47,7 +47,9 @@
     "serverless:local:webhooks": "cd infra/serverless/webhooks && serverless offline",
     
     "infra:dev": "npm run docker:up && npm run pulumi:dev",
-    "infra:local": "npm run docker:up"
+    "infra:local": "npm run docker:up",
+
+    "postinstall": "npx dotenv -e .env -- prisma generate --schema apps/api/prisma/schema.prisma"
   },
   "private": true,
   "devDependencies": {
