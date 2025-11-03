@@ -2,26 +2,6 @@
   "name": "pitaia",
   "version": "1.0.0",
   "scripts": {
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-    "docker:logs": "docker-compose logs -f",
-    "docker:build": "docker-compose build",
-    "docker:ps": "docker-compose ps",
-    "docker:restart": "docker-compose restart",
-    
-    "pulumi:dev": "cd infra/pulumi/dev && pulumi up",
-    "pulumi:staging": "cd infra/pulumi/staging && pulumi up",
-    "pulumi:prod": "cd infra/pulumi/prod && pulumi up",
-    "pulumi:dev:destroy": "cd infra/pulumi/dev && pulumi destroy",
-    
-    "serverless:install": "cd infra/serverless/webhooks && npm install && cd ../etl && npm install && cd ../triggers && npm install",
-    "serverless:deploy:webhooks": "cd infra/serverless/webhooks && serverless deploy",
-    "serverless:deploy:etl": "cd infra/serverless/etl && serverless deploy",
-    "serverless:deploy:triggers": "cd infra/serverless/triggers && serverless deploy",
-    "serverless:deploy:all": "npm run serverless:deploy:webhooks && npm run serverless:deploy:etl && npm run serverless:deploy:triggers",
-    "serverless:local:webhooks": "cd infra/serverless/webhooks && serverless offline",
-    
-    "infra:dev": "npm run docker:up && npm run pulumi:dev",
-    "infra:local": "npm run docker:up"
+
   }
 }
