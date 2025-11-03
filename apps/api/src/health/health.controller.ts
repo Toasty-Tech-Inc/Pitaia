@@ -21,7 +21,6 @@ export class HealthController {
     check() {
         return this.health.check([
             () => this.http.pingCheck('dashboard', 'https://new-pitaia-dashboard.vercel.app'),
-            () => this.http.pingCheck('menu', 'https://pitaia-six.vercel.app'),
             () => this.http.pingCheck('web', 'https://pitaia-web.vercel.app'),
             () => this.prisma.pingCheck('database', this.prismaService),
         ]);
