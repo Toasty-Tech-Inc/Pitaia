@@ -12,6 +12,7 @@ import { TransformInterceptor } from '../common/interceptors/transform.intercept
 import { ValidationPipe } from '../common/pipes/validation.pipe';
 import { HealthModule } from '../health/health.module';
 import { EstablishmentsModule } from '../modules/establishments/establishments.module';
+import { ProductsModule } from '../modules/products/product.module';
 
 @Module({
   imports: [
@@ -21,8 +22,8 @@ import { EstablishmentsModule } from '../modules/establishments/establishments.m
     }),
     ThrottlerModule.forRoot([
       {
-        ttl: 60000, // 1 minuto
-        limit: 10, // 10 requisições
+        ttl: 60000,
+        limit: 10,
       },
     ]),
     HealthModule,
@@ -30,6 +31,7 @@ import { EstablishmentsModule } from '../modules/establishments/establishments.m
     AuthModule,
     UsersModule,
     EstablishmentsModule,
+    ProductsModule,
   ],
   providers: [
     // {

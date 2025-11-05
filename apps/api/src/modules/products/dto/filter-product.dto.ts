@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsBoolean, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsBoolean, IsUUID, IsNumber, Min } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { PaginationDto } from '../../../common/dtos/pagination.dto';
@@ -30,4 +30,36 @@ export class FilterProductDto extends PaginationDto {
   @IsBoolean()
   @Transform(({ value }) => value === 'true')
   isAvailable?: boolean;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  isFeatured?: boolean;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  trackInventory?: boolean;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  lowStock?: boolean;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Transform(({ value }) => parseFloat(value))
+  minPrice?: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Transform(({ value }) => parseFloat(value))
+  maxPrice?: number;
 }
