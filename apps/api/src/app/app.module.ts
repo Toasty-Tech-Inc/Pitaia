@@ -13,6 +13,7 @@ import { ValidationPipe } from '../common/pipes/validation.pipe';
 import { HealthModule } from '../health/health.module';
 import { EstablishmentsModule } from '../modules/establishments/establishments.module';
 import { ProductsModule } from '../modules/products/product.module';
+import { OrdersModule } from '../modules/orders/orders.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ProductsModule } from '../modules/products/product.module';
     UsersModule,
     EstablishmentsModule,
     ProductsModule,
+    OrdersModule,
   ],
   providers: [
     // {
