@@ -89,21 +89,21 @@ export class CreateOrderDto {
   @IsNumber()
   @Min(0)
   @Transform(({ value }) => parseFloat(value))
-  discount?: number;
+  discount?: Decimal;
 
   @ApiPropertyOptional({ example: 5.00 })
   @IsOptional()
   @IsNumber()
   @Min(0)
   @Transform(({ value }) => parseFloat(value))
-  deliveryFee?: number;
+  deliveryFee?: Decimal;
 
   @ApiPropertyOptional({ example: 0 })
   @IsOptional()
   @IsNumber()
   @Min(0)
   @Transform(({ value }) => parseFloat(value))
-  serviceFee?: number;
+  serviceFee?: Decimal;
 
   @ApiPropertyOptional()
   @IsOptional()
