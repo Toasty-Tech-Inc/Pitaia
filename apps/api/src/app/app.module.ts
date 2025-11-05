@@ -11,6 +11,7 @@ import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
 import { TransformInterceptor } from '../common/interceptors/transform.interceptor';
 import { ValidationPipe } from '../common/pipes/validation.pipe';
 import { HealthModule } from '../health/health.module';
+import { EstablishmentsModule } from '../modules/establishments/establishments.module';
 
 @Module({
   imports: [
@@ -24,10 +25,11 @@ import { HealthModule } from '../health/health.module';
         limit: 10, // 10 requisições
       },
     ]),
+    HealthModule,
     DatabaseModule,
     AuthModule,
     UsersModule,
-    HealthModule,
+    EstablishmentsModule,
   ],
   providers: [
     // {
