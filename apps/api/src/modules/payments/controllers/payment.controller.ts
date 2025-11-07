@@ -2,12 +2,9 @@ import {
   Controller,
   Get,
   Post,
-  Put,
-  Patch,
-  Delete,
   Body,
   Param,
-  Query,
+  UseGuards,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -15,330 +12,89 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse,
+  ApiBearerAuth,
   ApiParam,
-  ApiQuery,
-  ApiBody,
 } from '@nestjs/swagger';
 import { PaymentService } from '../services/payment.service';
-import { CreatePaymentMethodDto } from '../dto/create-payment-method.dto';
-import { UpdatePaymentMethodDto } from '../dto/update-payment-method.dto';
 import { CreatePaymentDto } from '../dto/create-payment.dto';
 import { ProcessPaymentDto } from '../dto/process-payment.dto';
-import { PaymentMethod, Payment } from '@prisma/client';
+import { RefundPaymentDto } from '../dto/refund-payment.dto';
+import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../../common/guards/roles.guard';
+import { Roles } from '../../../common/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('Payments')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('payments')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  // ============================================
-  // PAYMENT METHODS ROUTES
-  // ============================================
-
-  @Post('methods')
-  @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({
-    summary: 'Criar nova forma de pagamento',
-    description: 'Cria uma nova forma de pagamento para o estabelecimento',
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Forma de pagamento criada com sucesso',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Dados inválidos',
-  })
-  @ApiBody({ type: CreatePaymentMethodDto })
-  async createPaymentMethod(
-    @Body() createPaymentMethodDto: CreatePaymentMethodDto,
-  ): Promise<PaymentMethod> {
-    return this.paymentService.createPaymentMethod(createPaymentMethodDto);
-  }
-
-  @Get('methods')
-  @ApiOperation({
-    summary: 'Listar todas as formas de pagamento',
-    description: 'Retorna todas as formas de pagamento de um estabelecimento',
-  })
-  @ApiQuery({
-    name: 'establishmentId',
-    required: true,
-    description: 'ID do estabelecimento',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de formas de pagamento retornada com sucesso',
-    type: [Object],
-  })
-  async findAllPaymentMethods(
-    @Query('establishmentId') establishmentId: string,
-  ): Promise<PaymentMethod[]> {
-    return this.paymentService.findAllPaymentMethods(establishmentId);
-  }
-
-  @Get('methods/active')
-  @ApiOperation({
-    summary: 'Listar formas de pagamento ativas',
-    description: 'Retorna apenas as formas de pagamento ativas de um estabelecimento',
-  })
-  @ApiQuery({
-    name: 'establishmentId',
-    required: true,
-    description: 'ID do estabelecimento',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de formas de pagamento ativas retornada com sucesso',
-  })
-  async findActivePaymentMethods(
-    @Query('establishmentId') establishmentId: string,
-  ): Promise<PaymentMethod[]> {
-    return this.paymentService.findActivePaymentMethods(establishmentId);
-  }
-
-  @Get('methods/:id')
-  @ApiOperation({
-    summary: 'Buscar forma de pagamento por ID',
-    description: 'Retorna os detalhes de uma forma de pagamento específica',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'ID da forma de pagamento',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Forma de pagamento encontrada',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Forma de pagamento não encontrada',
-  })
-  async findOnePaymentMethod(@Param('id') id: string): Promise<PaymentMethod> {
-    return this.paymentService.findOnePaymentMethod(id);
-  }
-
-  @Put('methods/:id')
-  @ApiOperation({
-    summary: 'Atualizar forma de pagamento',
-    description: 'Atualiza os dados de uma forma de pagamento existente',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'ID da forma de pagamento',
-    type: String,
-  })
-  @ApiBody({ type: UpdatePaymentMethodDto })
-  @ApiResponse({
-    status: 200,
-    description: 'Forma de pagamento atualizada com sucesso',
-    type: Object,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Forma de pagamento não encontrada',
-  })
-  async updatePaymentMethod(
-    @Param('id') id: string,
-    @Body() updatePaymentMethodDto: UpdatePaymentMethodDto,
-  ): Promise<PaymentMethod> {
-    return this.paymentService.updatePaymentMethod(id, updatePaymentMethodDto);
-  }
-
-  @Patch('methods/:id/toggle')
-  @ApiOperation({
-    summary: 'Ativar/Desativar forma de pagamento',
-    description: 'Alterna o status ativo/inativo de uma forma de pagamento',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'ID da forma de pagamento',
-    type: String,
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Status alterado com sucesso',
-    type: Object,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Forma de pagamento não encontrada',
-  })
-  async togglePaymentMethod(@Param('id') id: string): Promise<PaymentMethod> {
-    return this.paymentService.togglePaymentMethod(id);
-  }
-
-  @Delete('methods/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({
-    summary: 'Remover forma de pagamento',
-    description: 'Remove uma forma de pagamento do sistema',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'ID da forma de pagamento',
-    type: String,
-  })
-  @ApiResponse({
-    status: 204,
-    description: 'Forma de pagamento removida com sucesso',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Forma de pagamento não encontrada',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Não é possível excluir forma de pagamento com pagamentos vinculados',
-  })
-  async removePaymentMethod(@Param('id') id: string): Promise<void> {
-    return this.paymentService.removePaymentMethod(id);
-  }
-
-  // ============================================
-  // PAYMENTS ROUTES
-  // ============================================
-
   @Post()
-  @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({
-    summary: 'Criar novo pagamento',
-    description: 'Registra um novo pagamento para uma venda',
-  })
-  @ApiBody({ type: CreatePaymentDto })
-  @ApiResponse({
-    status: 201,
-    description: 'Pagamento criado com sucesso',
-    type: Object,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Dados inválidos ou valor ultrapassa o total da venda',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Venda ou forma de pagamento não encontrada',
-  })
-  async createPayment(
-    @Body() createPaymentDto: CreatePaymentDto,
-  ): Promise<Payment> {
-    return this.paymentService.createPayment(createPaymentDto);
+  @Roles(UserRole.OWNER, UserRole.MANAGER, UserRole.CASHIER)
+  @ApiOperation({ summary: 'Criar pagamento individual' })
+  @ApiResponse({ status: 201, description: 'Pagamento criado com sucesso' })
+  @ApiResponse({ status: 400, description: 'Valor excede total da venda' })
+  create(@Body() createDto: CreatePaymentDto) {
+    return this.paymentService.createPayment(createDto);
   }
 
   @Post('process/:orderId')
-  @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({
-    summary: 'Processar pagamento de pedido',
-    description: 'Processa múltiplos pagamentos para um pedido e cria/atualiza a venda correspondente',
-  })
-  @ApiParam({
-    name: 'orderId',
-    description: 'ID do pedido',
-    type: String,
-  })
-  @ApiBody({ type: ProcessPaymentDto })
+  @Roles(UserRole.OWNER, UserRole.MANAGER, UserRole.CASHIER)
+  @ApiOperation({ summary: 'Processar pagamento completo do pedido' })
+  @ApiParam({ name: 'orderId', description: 'ID do pedido' })
   @ApiResponse({
     status: 201,
     description: 'Pagamentos processados com sucesso',
-    type: [Object],
+    schema: {
+      example: [
+        {
+          id: 'uuid',
+          saleId: 'uuid',
+          paymentMethodId: 'uuid',
+          amount: 50.00,
+          status: 'PAID',
+        },
+      ],
+    },
   })
-  @ApiResponse({
-    status: 400,
-    description: 'Total dos pagamentos não corresponde ao total do pedido',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Pedido não encontrado',
-  })
-  async processPayment(
+  @ApiResponse({ status: 400, description: 'Total dos pagamentos não corresponde ao pedido' })
+  @ApiResponse({ status: 404, description: 'Pedido não encontrado' })
+  processPayment(
     @Param('orderId') orderId: string,
-    @Body() processPaymentDto: ProcessPaymentDto,
-  ): Promise<Payment[]> {
-    return this.paymentService.processPayment(orderId, processPaymentDto);
+    @Body() processDto: ProcessPaymentDto,
+  ) {
+    return this.paymentService.processPayment(orderId, processDto);
   }
 
   @Get('sale/:saleId')
-  @ApiOperation({
-    summary: 'Listar pagamentos de uma venda',
-    description: 'Retorna todos os pagamentos relacionados a uma venda específica',
-  })
-  @ApiParam({
-    name: 'saleId',
-    description: 'ID da venda',
-    type: String,
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Lista de pagamentos retornada com sucesso',
-    type: [Object],
-  })
-  async findPaymentsBySale(@Param('saleId') saleId: string): Promise<Payment[]> {
+  @Roles(UserRole.OWNER, UserRole.MANAGER, UserRole.CASHIER)
+  @ApiOperation({ summary: 'Listar pagamentos de uma venda' })
+  @ApiParam({ name: 'saleId', description: 'ID da venda' })
+  @ApiResponse({ status: 200, description: 'Lista de pagamentos da venda' })
+  findBySale(@Param('saleId') saleId: string) {
     return this.paymentService.findPaymentsBySale(saleId);
   }
 
   @Get(':id')
-  @ApiOperation({
-    summary: 'Buscar pagamento por ID',
-    description: 'Retorna os detalhes de um pagamento específico',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'ID do pagamento',
-    type: String,
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Pagamento encontrado',
-    type: Object,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Pagamento não encontrado',
-  })
-  async findOnePayment(@Param('id') id: string): Promise<Payment> {
+  @Roles(UserRole.OWNER, UserRole.MANAGER, UserRole.CASHIER)
+  @ApiOperation({ summary: 'Buscar pagamento por ID' })
+  @ApiParam({ name: 'id', description: 'ID do pagamento' })
+  @ApiResponse({ status: 200, description: 'Pagamento encontrado' })
+  @ApiResponse({ status: 404, description: 'Pagamento não encontrado' })
+  findOne(@Param('id') id: string) {
     return this.paymentService.findOnePayment(id);
   }
 
   @Post(':id/refund')
-  @ApiOperation({
-    summary: 'Estornar pagamento',
-    description: 'Realiza o estorno de um pagamento confirmado',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'ID do pagamento',
-    type: String,
-  })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        reason: {
-          type: 'string',
-          description: 'Motivo do estorno',
-          example: 'Produto com defeito',
-        },
-      },
-      required: ['reason'],
-    },
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Pagamento estornado com sucesso',
-    type: Object,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Apenas pagamentos confirmados podem ser estornados',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Pagamento não encontrado',
-  })
-  async refundPayment(
-    @Param('id') id: string,
-    @Body('reason') reason: string,
-  ): Promise<Payment> {
-    return this.paymentService.refundPayment(id, reason);
+  @Roles(UserRole.OWNER, UserRole.MANAGER)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Estornar pagamento' })
+  @ApiParam({ name: 'id', description: 'ID do pagamento' })
+  @ApiResponse({ status: 200, description: 'Pagamento estornado com sucesso' })
+  @ApiResponse({ status: 400, description: 'Apenas pagamentos confirmados podem ser estornados' })
+  refund(@Param('id') id: string, @Body() refundDto: RefundPaymentDto) {
+    return this.paymentService.refundPayment(id, refundDto.reason);
   }
 }
