@@ -14,6 +14,7 @@ import { HealthModule } from '../health/health.module';
 import { EstablishmentsModule } from '../modules/establishments/establishments.module';
 import { ProductsModule } from '../modules/products/product.module';
 import { OrdersModule } from '../modules/orders/orders.module';
+import { PaymentsModule } from '../modules/payments/payment.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { OrdersModule } from '../modules/orders/orders.module';
     EstablishmentsModule,
     ProductsModule,
     OrdersModule,
+    PaymentsModule,
   ],
   providers: [
     // {
