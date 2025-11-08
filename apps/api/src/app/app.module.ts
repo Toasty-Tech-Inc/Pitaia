@@ -1,3 +1,4 @@
+import { ModifiersModule } from './../modules/modifiers/modifiers.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
@@ -35,6 +36,7 @@ import { AddressesModule } from '../modules/addresses/addresses.module';
     UsersModule,
     EstablishmentsModule,
     ProductsModule,
+    ModifiersModule,
     OrdersModule,
     PaymentsModule,
     AddressesModule,

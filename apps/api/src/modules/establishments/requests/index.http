@@ -1,0 +1,27 @@
+### Criar estabelecimento
+POST http://localhost:3000/api/establishments
+Content-Type: application/json
+Authorization: Bearer
+
+{
+  "name": "Restaurante Pitaia",
+  "tradeName": "Pitaia",
+  "cnpj": "12345678000190",
+  "email": "contato@pitaia.com",
+  "phone": "12345678000190",
+  "logo": "string",
+  "street": "Rua das Flores",
+  "number": "123",
+  "complement": "Sala 10",
+  "neighborhood": "Centro",
+  "city": "São Paulo",
+  "state": "SP",
+  "zipCode": "01000000",
+  "timezone": "America/Sao_Paulo",
+  "currency": "BRL"
+}
+
+###
+
+GET http://localhost:3000/api/establishments
+Authorization: Bearer 
