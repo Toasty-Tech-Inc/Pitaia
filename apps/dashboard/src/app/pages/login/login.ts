@@ -1,5 +1,5 @@
 import {AsyncPipe, NgIf} from '@angular/common';
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {
     TuiAppearance,
@@ -12,6 +12,7 @@ import {
 } from '@taiga-ui/core';
 import {TuiFieldErrorPipe, TuiSegmented, TuiSwitch, TuiTooltip} from '@taiga-ui/kit';
 import {TuiCardLarge, TuiForm, TuiHeader} from '@taiga-ui/layout';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -39,10 +40,17 @@ import {TuiCardLarge, TuiForm, TuiHeader} from '@taiga-ui/layout';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Login {
+  private userService = inject(UserService)
       protected readonly form = new FormGroup({
-        name: new FormControl('', Validators.required),
-        email: new FormControl(''),
+        email: new FormControl('', Validators.required),
+        password: new FormControl(''),
         subscribe: new FormControl(false),
         basic: new FormControl(true),
     });
+
+    login() {
+        console.log(this.form.value)
+        if (this.form.invalid || this.form.controls.basic.value || !this.form.value.email || !this.form.value.password) return
+        this.userService.login(this.form.value.email, this.form.value.password)
+    }
 }

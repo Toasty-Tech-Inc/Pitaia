@@ -4,6 +4,7 @@
     tuiForm="m"
     [formGroup]="form"
     [style.max-width.rem]="32"
+    (submit)="login()"
 >
     <header tuiHeader>
         <h2 tuiTitle>
@@ -38,25 +39,25 @@
         </h3>
     </tui-notification>
     <tui-textfield>
-        <label for="name" tuiLabel>Nome</label>
+        <label for="email" tuiLabel>Email</label>
         <input
-            formControlName="name"
-            placeholder="Johnny Picolo"
+            formControlName="email"
+            placeholder="johnny@toastytech.com.br"
             tuiTextfield
         />
     </tui-textfield>
     <tui-error
-        formControlName="name"
+        formControlName="email"
         [error]="[] | tuiFieldError | async"
     />
     <ng-container *ngIf="!form.controls.basic.value">
         <tui-textfield>
-            <label for="name" tuiLabel>Email</label>
+            <label for="name" tuiLabel>Senha</label>
             <input
-                formControlName="email"
-                placeholder="johnny@toastytech.com.br"
+                formControlName="password"
+                placeholder="**********"
                 tuiTextfield
-                type="email"
+                type="password"
             />
         </tui-textfield>
         <label tuiLabel>
