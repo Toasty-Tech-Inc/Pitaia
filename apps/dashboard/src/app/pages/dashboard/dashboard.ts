@@ -29,10 +29,8 @@ interface Stat {
   standalone: true,
   imports: [
     CommonModule,
-    TuiRoot,
     TuiCardLarge,
     TuiHeader,
-    TuiCell,
     TuiAvatar,
     TuiBadge,
     TuiChip,
@@ -42,11 +40,9 @@ interface Stat {
     TuiIcon,
     TuiTable,
     TuiTableFilters,
-    TuiAxes,
-    TuiBarChart,
     TuiDrawer,
     TuiTabs,
-    TuiPopup
+    TuiPopup,
   ],
   template: `
       <div class="dashboard">
