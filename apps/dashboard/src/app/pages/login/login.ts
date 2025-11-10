@@ -13,6 +13,8 @@ import {
 import {TuiFieldErrorPipe, TuiSegmented, TuiSwitch, TuiTooltip} from '@taiga-ui/kit';
 import {TuiCardLarge, TuiForm, TuiHeader} from '@taiga-ui/layout';
 import { UserService } from '../../services/user.service';
+import {RouterLink} from '@angular/router';
+import {TuiLink} from '@taiga-ui/core';
 
 @Component({
   selector: 'app-login',
@@ -34,6 +36,8 @@ import { UserService } from '../../services/user.service';
         TuiTextfield,
         TuiTitle,
         TuiTooltip,
+        TuiLink,
+        RouterLink
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',

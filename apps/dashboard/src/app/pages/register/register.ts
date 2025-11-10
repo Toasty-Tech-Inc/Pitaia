@@ -4,6 +4,8 @@ import { TuiButton, TuiTextfield, TuiTitle } from '@taiga-ui/core';
 import { TuiForm, TuiHeader } from '@taiga-ui/layout';
 import {TuiInputPhone} from '@taiga-ui/kit';
 import { UserService } from '../../services/user.service';
+	import {RouterLink} from '@angular/router';
+import {TuiLink} from '@taiga-ui/core';
 
 @Component({
     standalone: true,
@@ -15,7 +17,9 @@ import { UserService } from '../../services/user.service';
         TuiTitle,
         TuiForm,
         TuiHeader,
-        TuiInputPhone
+        TuiInputPhone,
+        RouterLink,
+        TuiLink
     ],
     template: `
         <div class="register-container">
@@ -101,6 +105,8 @@ import { UserService } from '../../services/user.service';
                     >
                         Criar Conta
                     </button>
+                            <span>Já possui uma conta? <a tuiLink routerLink="/login">Entrar</a></span>
+
                 </footer>
             </form>
         </div>
