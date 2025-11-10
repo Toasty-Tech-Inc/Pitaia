@@ -105,9 +105,9 @@ import {TuiLink} from '@taiga-ui/core';
                     >
                         Criar Conta
                     </button>
-                            <span>Já possui uma conta? <a tuiLink routerLink="/login">Entrar</a></span>
-
+                    
                 </footer>
+                <span>Já possui uma conta? <a tuiLink routerLink="/login">Entrar</a></span>
             </form>
         </div>
     `,
