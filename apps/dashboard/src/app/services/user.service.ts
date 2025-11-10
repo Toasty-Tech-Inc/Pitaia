@@ -56,4 +56,14 @@ export class UserService {
                 this.router.navigate(['/dashboard'])
             })
     }
+
+    public register(name: string, email: string, password: string, phone: string) {
+        return this.http.post<any>(`${this.urlApi}/api/auth/register`, { name, email, password, phone })
+            .subscribe((response) => {
+                const { access_token, user } = response.data
+                localStorage.setItem('access_token', access_token)
+                this.setCurrentUser(user)
+                this.router.navigate(['/dashboard'])
+            })
+    }
 }
