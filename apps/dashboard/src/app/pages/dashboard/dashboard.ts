@@ -1,11 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TuiPopup, TuiRoot } from '@taiga-ui/core';
-import { TuiCardLarge, TuiHeader, TuiCell } from '@taiga-ui/layout';
+import { TuiPopup } from '@taiga-ui/core';
+import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { TuiAvatar, TuiBadge, TuiChip, TuiDrawer, TuiTabs } from '@taiga-ui/kit';
 import { TuiButton, TuiDataList, TuiDropdown, TuiIcon } from '@taiga-ui/core';
 import { TuiTable, TuiTableFilters } from '@taiga-ui/addon-table';
-import { TuiAxes, TuiBarChart } from '@taiga-ui/addon-charts';
 
 interface Order {
   id: string;
