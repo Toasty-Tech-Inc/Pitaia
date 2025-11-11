@@ -17,6 +17,7 @@ import { ProductsModule } from '../modules/products/product.module';
 import { OrdersModule } from '../modules/orders/orders.module';
 import { PaymentsModule } from '../modules/payments/payment.module';
 import { AddressesModule } from '../modules/addresses/addresses.module';
+import { SaleModule } from '../modules/sales/sale.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AddressesModule } from '../modules/addresses/addresses.module';
     ProductsModule,
     ModifiersModule,
     OrdersModule,
+    SaleModule,
     PaymentsModule,
     AddressesModule,
   ],
