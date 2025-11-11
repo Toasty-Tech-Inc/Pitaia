@@ -11,7 +11,7 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
 import { TransformInterceptor } from '../common/interceptors/transform.interceptor';
 import { ValidationPipe } from '../common/pipes/validation.pipe';
-import { HealthModule } from '../health/health.module';
+import { HealthModule } from '../modules/health/health.module';
 import { EstablishmentsModule } from '../modules/establishments/establishments.module';
 import { ProductsModule } from '../modules/products/product.module';
 import { OrdersModule } from '../modules/orders/orders.module';

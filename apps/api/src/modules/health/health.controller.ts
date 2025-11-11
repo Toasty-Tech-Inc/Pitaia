@@ -1,8 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheckService, HttpHealthIndicator, HealthCheck, PrismaHealthIndicator } from '@nestjs/terminus';
 import { ApiTags } from '@nestjs/swagger';
-import { PrismaService } from '../database/prisma.service';
-import { Public } from '../common/decorators/public.decorator';
+import { PrismaService } from '../../database/prisma.service';
+import { Public } from '../../common/decorators/public.decorator';
 
 @ApiTags('Health')
 @Public()
