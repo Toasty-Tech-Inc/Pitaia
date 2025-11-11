@@ -1,0 +1,180 @@
+       :host {
+            --pitaia-primary: #FE3867;
+            --pitaia-primary-hover: #E5305C;
+            --pitaia-success: #38D9A9;
+            --pitaia-success-hover: #2FC598;
+            --pitaia-warning: #FFC107;
+            --pitaia-info: #03A9F4;
+            --pitaia-dark: #1A1A1A;
+            --pitaia-light: #F5F5F5;
+        }
+
+        .pitaia-header {
+            background: var(--pitaia-dark);
+            color: white;
+        }
+
+        .pitaia-primary-btn {
+            background-color: var(--pitaia-primary) !important;
+            color: white !important;
+
+            &:hover {
+                background-color: var(--pitaia-primary-hover) !important;
+            }
+        }
+
+        .pitaia-main {
+            background: var(--pitaia-light);
+            padding: 0;
+        }
+
+        .kanban-container {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem;
+            overflow-x: auto;
+            min-height: calc(100vh - 180px);
+        }
+
+        .kanban-column {
+            min-width: 320px;
+            max-width: 380px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e0e0e0;
+            border-left: 4px solid transparent;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .column-title {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--pitaia-dark);
+        }
+
+        .column-content {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .order-card {
+            padding: 1rem !important;
+            cursor: move;
+            transition: all 0.2s ease;
+            border: 1px solid #e0e0e0;
+
+            &:hover {
+                box-shadow: 0 4px 12px rgba(254, 56, 103, 0.15) !important;
+                border-color: var(--pitaia-primary);
+            }
+        }
+
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .order-id {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--pitaia-primary);
+        }
+
+        .order-card-body {
+            margin-bottom: 0.75rem;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--pitaia-dark);
+        }
+
+        .order-items {
+            list-style: none;
+            padding: 0;
+            margin: 0.5rem 0;
+            font-size: 0.875rem;
+            color: #666;
+
+            li {
+                padding: 0.25rem 0;
+                border-bottom: 1px dashed #e0e0e0;
+
+                &:last-child {
+                    border-bottom: none;
+                }
+            }
+
+            .more-items {
+                font-style: italic;
+                color: var(--pitaia-primary);
+            }
+        }
+
+        .order-meta {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.75rem;
+            font-size: 0.8rem;
+            color: #888;
+
+            span {
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+        }
+
+        .order-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .order-total {
+            font-size: 1.25rem;
+            color: var(--pitaia-success);
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .cdk-drag-preview {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            opacity: 0.9;
+        }
+
+        .cdk-drag-placeholder {
+            opacity: 0.4;
+            background: #f0f0f0;
+            border: 2px dashed var(--pitaia-primary);
+        }
+
+        .cdk-drag-animating {
+            transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+        }
