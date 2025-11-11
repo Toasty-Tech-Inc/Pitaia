@@ -1,9 +1,9 @@
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { KeyValuePipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { KeyValuePipe, NgForOf, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { tuiAsPortal, TuiPortals, TuiRepeatTimes } from '@taiga-ui/cdk';
+import { RouterLinkActive } from '@angular/router';
+import { tuiAsPortal, TuiPortals } from '@taiga-ui/cdk';
 import {
     TuiAppearance,
     TuiButton,
@@ -13,7 +13,6 @@ import {
     TuiIcon,
     TuiLink,
     TuiTextfield,
-    TuiTitle,
 } from '@taiga-ui/core';
 import {
     TuiAvatar,
@@ -21,12 +20,11 @@ import {
     TuiBadgeNotification,
     TuiBreadcrumbs,
     TuiChevron,
-    TuiDataListDropdownManager,
     TuiFade,
     TuiSwitch,
     TuiTabs,
 } from '@taiga-ui/kit';
-import { TuiCardLarge, TuiForm, TuiHeader, TuiNavigation } from '@taiga-ui/layout';
+import { TuiCardLarge, TuiNavigation } from '@taiga-ui/layout';
 
 interface Order {
     id: number;
@@ -54,10 +52,8 @@ interface KanbanColumn {
         DragDropModule,
         FormsModule,
         KeyValuePipe,
-        NgClass,
         NgForOf,
         NgIf,
-        RouterLink,
         RouterLinkActive,
         TuiAppearance,
         TuiAvatar,
@@ -68,392 +64,17 @@ interface KanbanColumn {
         TuiCardLarge,
         TuiChevron,
         TuiDataList,
-        TuiDataListDropdownManager,
         TuiDropdown,
         TuiFade,
-        TuiForm,
-        TuiHeader,
+
         TuiIcon,
         TuiLink,
         TuiNavigation,
-        TuiRepeatTimes,
         TuiSwitch,
         TuiTabs,
         TuiTextfield,
-        TuiTitle,
     ],
-    template: `
-        <div class="custom-portal">
-            <ng-container #viewContainer />
-        </div>
-
-        <header tuiNavigationHeader class="pitaia-header">
-            <button
-                title="Menu"
-                tuiIconButton
-                tuiNavigationDrawer
-                type="button"
-                [(open)]="open"
-            >
-                <tui-data-list>
-                    <tui-opt-group
-                        *ngFor="let group of drawer | keyvalue"
-                        [label]="group.key"
-                    >
-                        <button
-                            *ngFor="let item of group.value"
-                            tuiOption
-                            type="button"
-                            (click)="open = false"
-                        >
-                            <tui-icon [icon]="item.icon" />
-                            {{ item.name }}
-                        </button>
-                    </tui-opt-group>
-                    <tui-opt-group>
-                        <label tuiOption>
-                            <input
-                                size="s"
-                                tuiSwitch
-                                type="checkbox"
-                                [(ngModel)]="darkMode"
-                            />
-                            Modo Escuro
-                        </label>
-                    </tui-opt-group>
-                </tui-data-list>
-            </button>
-
-            <span tuiNavigationLogo>
-                <tui-icon icon="@tui.home" />
-                <span tuiFade>Pitaia - Sistema de Gestão</span>
-            </span>
-
-            <span tuiNavigationSegments>
-                <button
-                    appearance="secondary-grayscale"
-                    tuiButton
-                    type="button"
-                >
-                    PDV
-                </button>
-                <button
-                    appearance="secondary-grayscale"
-                    tuiButton
-                    type="button"
-                >
-                    Pedidos
-                </button>
-                <button
-                    appearance="secondary-grayscale"
-                    tuiButton
-                    type="button"
-                >
-                    Relatórios
-                </button>
-            </span>
-
-            <hr />
-
-            <button
-                class="pitaia-primary-btn"
-                iconStart="@tui.plus"
-                tuiButton
-                type="button"
-            >
-                Novo Pedido
-            </button>
-
-            <button
-                iconStart="@tui.bell"
-                tuiIconButton
-                type="button"
-            >
-                Notificações
-                <tui-badge-notification *ngIf="notifications() > 0" />
-            </button>
-
-            <button
-                iconStart="@tui.printer"
-                tuiIconButton
-                type="button"
-                title="Imprimir Pedidos"
-            >
-                Impressão
-            </button>
-
-            <tui-avatar text="Admin" />
-        </header>
-
-        <div [style.display]="'flex'">
-            <aside
-                [style.height]="'calc(100vh - 64px)'"
-                [tuiNavigationAside]="expanded()"
-            >
-                <header>
-                    <button
-                        iconStart="@tui.layout-grid"
-                        tuiAsideItem
-                        type="button"
-                    >
-                        <span tuiFade>Dashboard</span>
-                    </button>
-                </header>
-
-                <button
-                    iconStart="@tui.shopping-cart"
-                    tuiAsideItem
-                    type="button"
-                >
-                    PDV
-                    <ng-container *ngIf="expanded()">
-                        <tui-badge appearance="accent">{{ activeOrders() }}</tui-badge>
-                    </ng-container>
-                </button>
-
-                <button
-                    iconStart="@tui.file-text"
-                    tuiAsideItem
-                    type="button"
-                >
-                    Pedidos
-                </button>
-
-                <button
-                    iconStart="@tui.layers"
-                    tuiAsideItem
-                    type="button"
-                >
-                    Mesas
-                </button>
-
-                <button
-                    iconStart="@tui.truck"
-                    tuiAsideItem
-                    type="button"
-                >
-                    Entregas
-                </button>
-
-                <tui-aside-group>
-                    <button
-                        iconStart="@tui.package"
-                        tuiAsideItem
-                        tuiChevron
-                        type="button"
-                    >
-                        Produtos
-                        <ng-template>
-                            <button tuiAsideItem type="button">Cardápio</button>
-                            <button tuiAsideItem type="button">Estoque</button>
-                            <button tuiAsideItem type="button">Categorias</button>
-                        </ng-template>
-                    </button>
-                </tui-aside-group>
-
-                <tui-aside-group>
-                    <button
-                        iconStart="@tui.bar-chart-2"
-                        tuiAsideItem
-                        tuiChevron
-                        type="button"
-                    >
-                        Relatórios
-                        <ng-template>
-                            <button tuiAsideItem type="button">Vendas</button>
-                            <button tuiAsideItem type="button">CMV</button>
-                            <button tuiAsideItem type="button">Caixa</button>
-                            <button tuiAsideItem type="button">Clientes</button>
-                        </ng-template>
-                    </button>
-                </tui-aside-group>
-
-                <button
-                    iconStart="@tui.users"
-                    tuiAsideItem
-                    type="button"
-                >
-                    Clientes
-                </button>
-
-                <button
-                    iconStart="@tui.gift"
-                    tuiAsideItem
-                    type="button"
-                >
-                    Promoções
-                </button>
-
-                <button
-                    iconStart="@tui.credit-card"
-                    tuiAsideItem
-                    type="button"
-                >
-                    Pagamentos
-                </button>
-
-                <hr />
-
-                <button
-                    iconStart="@tui.settings"
-                    tuiAsideItem
-                    type="button"
-                >
-                    Configurações
-                </button>
-
-                <footer>
-                    <button
-                        iconStart="@tui.dollar-sign"
-                        tuiAsideItem
-                        type="button"
-                    >
-                        Caixa
-                    </button>
-                    <button
-                        tuiAsideItem
-                        type="button"
-                        [iconStart]="expanded() ? '@tui.chevron-left' : '@tui.chevron-right'"
-                        (click)="handleToggle()"
-                    >
-                        {{ expanded() ? 'Recolher' : 'Expandir' }}
-                    </button>
-                </footer>
-            </aside>
-
-            <main tuiNavigationMain class="pitaia-main">
-                <nav compact tuiSubheader [style.position]="'sticky'">
-                    <tui-breadcrumbs [itemsLimit]="10">
-                        <ng-container *ngFor="let item of breadcrumbs; let last = last">
-                            <ng-container *ngIf="last">
-                                <strong *tuiItem tuiFade>{{ item }}</strong>
-                            </ng-container>
-                            <ng-container *ngIf="!last">
-                                <button *tuiItem tuiLink type="button">{{ item }}</button>
-                            </ng-container>
-                        </ng-container>
-                    </tui-breadcrumbs>
-
-                    <tui-tabs tuiFade>
-                        <button tuiTab type="button">Kanban</button>
-                        <button tuiTab type="button">Lista</button>
-                        <button tuiTab type="button">Estatísticas</button>
-                    </tui-tabs>
-
-                    <button
-                        appearance="secondary"
-                        iconStart="@tui.filter"
-                        tuiButton
-                        type="button"
-                    >
-                        Filtrar
-                    </button>
-
-                    <button
-                        class="pitaia-primary-btn"
-                        iconStart="@tui.refresh-cw"
-                        tuiButton
-                        type="button"
-                    >
-                        Atualizar
-                    </button>
-                </nav>
-
-                <!-- Kanban Board -->
-                <div class="kanban-container" cdkDropListGroup>
-                    <div
-                        *ngFor="let column of kanbanColumns"
-                        class="kanban-column"
-                        cdkDropList
-                        [cdkDropListData]="column.orders"
-                        (cdkDropListDropped)="onDrop($event)"
-                    >
-                        <div class="column-header" [style.border-left-color]="column.color">
-                            <h3 class="column-title">
-                                {{ column.title }}
-                                <tui-badge [style.background-color]="column.color">
-                                    {{ column.orders.length }}
-                                </tui-badge>
-                            </h3>
-                        </div>
-
-                        <div class="column-content">
-                            <div
-                                *ngFor="let order of column.orders"
-                                class="order-card"
-                                cdkDrag
-                                tuiAppearance="floating"
-                                tuiCardLarge
-                            >
-                                <div class="order-card-header">
-                                    <span class="order-id">#{{ order.id }}</span>
-                                    <tui-badge
-                                        *ngIf="order.deliveryType === 'delivery'"
-                                        appearance="accent"
-                                    >
-                                        <tui-icon icon="@tui.truck" />
-                                    </tui-badge>
-                                    <tui-badge
-                                        *ngIf="order.deliveryType === 'local'"
-                                        appearance="info"
-                                    >
-                                        Mesa {{ order.table }}
-                                    </tui-badge>
-                                </div>
-
-                                <div class="order-card-body">
-                                    <p class="customer-name">
-                                        <tui-icon icon="@tui.user" />
-                                        {{ order.customer }}
-                                    </p>
-
-                                    <ul class="order-items">
-                                        <li *ngFor="let item of order.items.slice(0, 3)">
-                                            {{ item }}
-                                        </li>
-                                        <li *ngIf="order.items.length > 3" class="more-items">
-                                            +{{ order.items.length - 3 }} itens
-                                        </li>
-                                    </ul>
-
-                                    <div class="order-meta">
-                                        <span class="order-time">
-                                            <tui-icon icon="@tui.clock" />
-                                            {{ formatTime(order.timestamp) }}
-                                        </span>
-                                        <span class="order-waiter" *ngIf="order.waiter">
-                                            <tui-icon icon="@tui.user-check" />
-                                            {{ order.waiter }}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="order-card-footer">
-                                    <strong class="order-total">R$ {{ order.total.toFixed(2) }}</strong>
-                                    <div class="order-actions">
-                                        <button
-                                            size="xs"
-                                            iconStart="@tui.eye"
-                                            tuiIconButton
-                                            type="button"
-                                            title="Ver detalhes"
-                                        ></button>
-                                        <button
-                                            size="xs"
-                                            iconStart="@tui.printer"
-                                            tuiIconButton
-                                            type="button"
-                                            title="Imprimir"
-                                        ></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-    `,
+    templateUrl: './dashboard.html',
     styleUrls: ['./dashboard.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TuiDropdownService, tuiAsPortal(TuiDropdownService)],
