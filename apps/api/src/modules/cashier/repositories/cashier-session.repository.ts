@@ -184,7 +184,7 @@ export class CashierSessionRepository
 
     expected += cashSalesTotal;
 
-    // Adicionar depósitos e subtrair retiradas
+    //@ts-expect-error prisma com tipagem errada
     session.movements.forEach((movement) => {
       const amount = Number(movement.amount);
       if (movement.type === 'DEPOSIT' || movement.type === 'ADJUSTMENT') {
