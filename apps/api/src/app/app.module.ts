@@ -20,6 +20,7 @@ import { AddressesModule } from '../modules/addresses/addresses.module';
 import { SaleModule } from '../modules/sales/sale.module';
 import { CashierModule } from '../modules/cashier/cashier.module';
 import { TablesModule } from '../modules/tables/tables.module';
+import { CouponsModule } from '../modules/coupons/coupons.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { TablesModule } from '../modules/tables/tables.module';
     PaymentsModule,
     AddressesModule,
     TablesModule,
+    CouponsModule,
   ],
   providers: [
     // {
