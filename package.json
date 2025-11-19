@@ -131,6 +131,7 @@
     "@nestjs/terminus": "^11.0.0",
     "@nestjs/throttler": "^6.4.0",
     "@prisma/client": "^6.18.0",
+    "@scalar/nestjs-api-reference": "^1.0.8",
     "@taiga-ui/addon-charts": "^4.59.0",
     "@taiga-ui/addon-commerce": "^4.59.0",
     "@taiga-ui/addon-mobile": "^4.59.0",
