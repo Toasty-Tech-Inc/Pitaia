@@ -22,6 +22,7 @@ import { CashierModule } from '../modules/cashier/cashier.module';
 import { TablesModule } from '../modules/tables/tables.module';
 import { CouponsModule } from '../modules/coupons/coupons.module';
 import { CustomersModule } from '../modules/customers/customers.module';
+import { CategoriesModule } from '../modules/categories/categories.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { CustomersModule } from '../modules/customers/customers.module';
     TablesModule,
     CouponsModule,
     CustomersModule,
+    CategoriesModule,
   ],
   providers: [
     // {
