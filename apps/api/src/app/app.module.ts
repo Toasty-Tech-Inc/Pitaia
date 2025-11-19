@@ -19,6 +19,7 @@ import { PaymentsModule } from '../modules/payments/payment.module';
 import { AddressesModule } from '../modules/addresses/addresses.module';
 import { SaleModule } from '../modules/sales/sale.module';
 import { CashierModule } from '../modules/cashier/cashier.module';
+import { TablesModule } from '../modules/tables/tables.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { CashierModule } from '../modules/cashier/cashier.module';
     CashierModule,
     PaymentsModule,
     AddressesModule,
+    TablesModule,
   ],
   providers: [
     // {
