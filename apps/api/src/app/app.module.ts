@@ -23,6 +23,10 @@ import { TablesModule } from '../modules/tables/tables.module';
 import { CouponsModule } from '../modules/coupons/coupons.module';
 import { CustomersModule } from '../modules/customers/customers.module';
 import { CategoriesModule } from '../modules/categories/categories.module';
+import { StockModule } from '../modules/stock/stock.module';
+import { LoyaltyModule } from '../modules/loyalty/loyalty.module';
+import { DynamicPricingModule } from '../modules/dynamic-pricing/dynamic-pricing.module';
+import { CashMovementsModule } from '../modules/cash-movements/cash-movements.module';
 
 @Module({
   imports: [
@@ -52,6 +56,10 @@ import { CategoriesModule } from '../modules/categories/categories.module';
     CouponsModule,
     CustomersModule,
     CategoriesModule,
+    StockModule,
+    LoyaltyModule,
+    DynamicPricingModule,
+    CashMovementsModule,
   ],
   providers: [
     // {
