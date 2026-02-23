@@ -3,7 +3,7 @@
 </header>
 
 <div [style.display]="'flex'">
-    <app-sidebar [expanded]="expanded()" [activeOrders]="kanbanColumns()[0]?.orders.length || 0" />
+    <app-sidebar [expanded]="expanded()" [activeOrders]="kanbanColumns()[0]?.orders?.length || 0" />
 
     <main tuiNavigationMain class="pitaia-main">
             <nav compact tuiSubheader [style.position]="'sticky'">
