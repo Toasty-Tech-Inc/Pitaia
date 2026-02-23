@@ -142,6 +142,7 @@
     "@taiga-ui/icons": "^4.59.0",
     "@taiga-ui/kit": "^4.59.0",
     "@taiga-ui/layout": "^4.59.0",
+    "@taiga-ui/polymorpheus": "^5.0.0",
     "argon2": "^0.44.0",
     "axios": "^1.6.0",
     "bcrypt": "^6.0.0",

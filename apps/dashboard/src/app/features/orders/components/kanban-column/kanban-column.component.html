@@ -1,0 +1,25 @@
+<div
+    class="kanban-column"
+    cdkDropList
+    [cdkDropListData]="column().orders"
+    (cdkDropListDropped)="handleDrop($event)"
+>
+    <div class="column-header" [style.border-left-color]="column().color">
+        <h3 class="column-title">
+            {{ column().title }}
+            <tui-badge [style.background-color]="column().color">
+                {{ column().orders.length }}
+            </tui-badge>
+        </h3>
+    </div>
+
+    <div class="column-content">
+        <app-order-card
+            *ngFor="let order of column().orders"
+            [order]="order"
+            (onView)="handleOrderView($event)"
+            (onPrint)="handleOrderPrint($event)"
+        />
+    </div>
+</div>
+

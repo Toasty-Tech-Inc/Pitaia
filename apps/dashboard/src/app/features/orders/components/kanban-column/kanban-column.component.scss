@@ -1,0 +1,30 @@
+.kanban-column {
+  flex: 1;
+  min-width: 300px;
+  background: var(--tui-base-01);
+  border-radius: var(--tui-radius-m);
+  padding: 1rem;
+  margin: 0 0.5rem;
+
+  .column-header {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid;
+    background: var(--tui-base-02);
+    border-radius: var(--tui-radius-s);
+
+    .column-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  }
+
+  .column-content {
+    min-height: 200px;
+  }
+}
+

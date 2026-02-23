@@ -1,0 +1,81 @@
+.order-card {
+  margin-bottom: 1rem;
+  cursor: move;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+
+    .order-id {
+      font-weight: 600;
+      color: var(--tui-text-01);
+    }
+  }
+
+  .order-card-body {
+    .customer-name {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .order-items {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0;
+      font-size: 0.875rem;
+      color: var(--tui-text-02);
+
+      li {
+        margin-bottom: 0.25rem;
+      }
+
+      .more-items {
+        color: var(--tui-text-03);
+        font-style: italic;
+      }
+    }
+
+    .order-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.75rem;
+      color: var(--tui-text-03);
+      margin-top: 0.5rem;
+
+      span {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+    }
+  }
+
+  .order-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--tui-base-03);
+
+    .order-total {
+      font-size: 1.125rem;
+      color: var(--tui-primary);
+    }
+
+    .order-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+}
+

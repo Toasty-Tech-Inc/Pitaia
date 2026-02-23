@@ -1,0 +1,69 @@
+<header tuiNavigationHeader>
+    <app-header />
+</header>
+
+<div [style.display]="'flex'">
+    <app-sidebar [expanded]="expanded()" [activeOrders]="kanbanColumns()[0]?.orders.length || 0" />
+
+    <main tuiNavigationMain class="pitaia-main">
+            <nav compact tuiSubheader [style.position]="'sticky'">
+                    <tui-breadcrumbs [itemsLimit]="10">
+                        <ng-container *ngFor="let item of breadcrumbs; let last = last">
+                            <ng-container *ngIf="last">
+                                <strong>{{ item }}</strong>
+                            </ng-container>
+                            <ng-container *ngIf="!last">
+                                <button tuiLink type="button">{{ item }}</button>
+                            </ng-container>
+                        </ng-container>
+                    </tui-breadcrumbs>
+
+            <tui-tabs [(activeItemIndex)]="activeTab">
+                <button tuiTab type="button">Kanban</button>
+                <button tuiTab type="button">Lista</button>
+                <button tuiTab type="button">Estatísticas</button>
+            </tui-tabs>
+
+            <button
+                appearance="secondary"
+                iconStart="@tui.filter"
+                tuiButton
+                type="button"
+            >
+                Filtrar
+            </button>
+
+            <button
+                class="pitaia-primary-btn"
+                iconStart="@tui.refresh-cw"
+                tuiButton
+                type="button"
+                (click)="refresh()"
+                [disabled]="loading()"
+            >
+                Atualizar
+            </button>
+        </nav>
+
+        <div *ngIf="loading()" class="loading-container">
+            <p>Carregando pedidos...</p>
+        </div>
+
+        <div *ngIf="error()" class="error-container">
+            <p>{{ error() }}</p>
+            <button tuiButton (click)="refresh()">Tentar novamente</button>
+        </div>
+
+        <!-- Kanban Board -->
+        <div *ngIf="!loading() && !error()" class="kanban-container" cdkDropListGroup>
+            <app-kanban-column
+                *ngFor="let column of kanbanColumns()"
+                [column]="column"
+                (onDrop)="onDrop($event)"
+                (onOrderView)="handleOrderView($event)"
+                (onOrderPrint)="handleOrderPrint($event)"
+            />
+        </div>
+    </main>
+</div>
+

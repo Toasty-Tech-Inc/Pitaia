@@ -1,0 +1,74 @@
+<div
+    class="order-card"
+    cdkDrag
+    tuiAppearance="floating"
+    tuiCardLarge
+>
+    <div class="order-card-header">
+        <span class="order-id">#{{ order().orderNumber }}</span>
+        <tui-badge
+            *ngIf="order().type === 'DELIVERY'"
+            appearance="accent"
+        >
+            <tui-icon [icon]="getDeliveryTypeIcon(order().type)" />
+        </tui-badge>
+        <tui-badge
+            *ngIf="order().type === 'DINE_IN' && order().table"
+            appearance="info"
+        >
+            Mesa {{ order().table?.number }}
+        </tui-badge>
+    </div>
+
+    <div class="order-card-body">
+        <p class="customer-name" *ngIf="order().customer">
+            <tui-icon icon="@tui.user" />
+            {{ order().customer.name }}
+        </p>
+
+        <ul class="order-items" *ngIf="order().items">
+            <li *ngFor="let item of order().items!.slice(0, 3)">
+                {{ item.product?.name || 'Produto' }} x{{ item.quantity }}
+            </li>
+            <li *ngIf="order().items!.length > 3" class="more-items">
+                +{{ order().items!.length - 3 }} itens
+            </li>
+        </ul>
+
+        <div class="order-meta">
+            <span class="order-time">
+                <tui-icon icon="@tui.clock" />
+                {{ formatTime(order().createdAt) }}
+            </span>
+            <span class="order-waiter" *ngIf="order().waiter">
+                <tui-icon icon="@tui.user-check" />
+                {{ order().waiter.name }}
+            </span>
+        </div>
+    </div>
+
+    <div class="order-card-footer">
+        <strong class="order-total">R$ {{ order().total.toFixed(2) }}</strong>
+                                    <div class="order-actions">
+                                        <button
+                                            size="xs"
+                                            iconStart="@tui.eye"
+                                            tuiButton
+                                            appearance="icon"
+                                            type="button"
+                                            title="Ver detalhes"
+                                            (click)="handleView()"
+                                        ></button>
+                                        <button
+                                            size="xs"
+                                            iconStart="@tui.printer"
+                                            tuiButton
+                                            appearance="icon"
+                                            type="button"
+                                            title="Imprimir"
+                                            (click)="handlePrint()"
+                                        ></button>
+                                    </div>
+    </div>
+</div>
+

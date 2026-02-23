@@ -1,0 +1,111 @@
+<div class="custom-portal">
+    <ng-container #viewContainer />
+</div>
+
+<header tuiNavigationHeader class="pitaia-header">
+    <button
+        title="Menu"
+        tuiIconButton
+        tuiNavigationDrawer
+        type="button"
+        [(open)]="open"
+    >
+        <tui-data-list>
+            <tui-opt-group
+                *ngFor="let group of drawer | keyvalue"
+                [label]="group.key"
+            >
+                <a
+                    *ngFor="let item of group.value"
+                    tuiOption
+                    [routerLink]="item.route"
+                    (click)="open = false"
+                >
+                    <tui-icon [icon]="item.icon" />
+                    {{ item.name }}
+                </a>
+            </tui-opt-group>
+        </tui-data-list>
+    </button>
+
+    <span tuiNavigationLogo>
+        <tui-icon icon="@tui.home" />
+        <span tuiFade>Pitaia - Sistema de Gestão</span>
+    </span>
+
+    <span tuiNavigationSegments>
+        <button
+            appearance="secondary-grayscale"
+            tuiButton
+            type="button"
+            routerLink="/pos"
+        >
+            PDV
+        </button>
+        <button
+            appearance="secondary-grayscale"
+            tuiButton
+            type="button"
+            routerLink="/orders"
+        >
+            Pedidos
+        </button>
+        <button
+            appearance="secondary-grayscale"
+            tuiButton
+            type="button"
+            routerLink="/reports"
+        >
+            Relatórios
+        </button>
+    </span>
+
+    <hr />
+
+    <button
+        class="pitaia-primary-btn"
+        iconStart="@tui.plus"
+        tuiButton
+        type="button"
+        routerLink="/orders/new"
+    >
+        Novo Pedido
+    </button>
+
+    <button
+        iconStart="@tui.bell"
+        tuiIconButton
+        type="button"
+    >
+        Notificações
+        <tui-badge-notification *ngIf="notifications() > 0" />
+    </button>
+
+    <button
+        iconStart="@tui.printer"
+        tuiIconButton
+        type="button"
+        title="Imprimir Pedidos"
+    >
+        Impressão
+    </button>
+
+    <tui-dropdown>
+        <button
+            tuiIconButton
+            type="button"
+            [tuiDropdown]="userMenu"
+        >
+            <tui-avatar [text]="user()?.name || 'User'" />
+        </button>
+        <ng-template #userMenu>
+            <tui-data-list>
+                <button tuiOption type="button" (click)="logout()">
+                    <tui-icon icon="@tui.log-out" />
+                    Sair
+                </button>
+            </tui-data-list>
+        </ng-template>
+    </tui-dropdown>
+</header>
+
