@@ -10,31 +10,27 @@ import {
   TuiTextfield,
 } from '@taiga-ui/core';
 import { TuiBadge, TuiBreadcrumbs, TuiTabs } from '@taiga-ui/kit';
-import { TuiCardLarge, TuiNavigation, TuiSubheader } from '@taiga-ui/layout';
-import { HeaderComponent } from '../../../shared/components/header/header.component';
-import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
-import { KanbanColumnComponent, KanbanColumn } from '../../../features/orders/components/kanban-column/kanban-column.component';
-import { OrdersService } from '../../../core/services/orders.service';
-import { Order, OrderStatus } from '../../../core/models/order.model';
+import { TuiCardLarge, TuiNavigation } from '@taiga-ui/layout';
+import { KanbanColumn, KanbanColumnComponent } from '../../features/orders/components/kanban-column/kanban-column.component';
+import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
+import { HeaderComponent } from '../../shared/components/header/header.component';
+import { OrdersService } from '../../core/services';
+import { Order, OrderStatus } from '../../core/models';
+
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     CommonModule,
-    KeyValuePipe,
     CdkDropListGroup,
     DragDropModule,
     FormsModule,
     TuiAppearance,
-    TuiBadge,
     TuiBreadcrumbs,
     TuiButton,
-    TuiCardLarge,
-    TuiIcon,
     TuiLink,
     TuiNavigation,
-    TuiSubheader,
     TuiTabs,
     TuiTextfield,
     HeaderComponent,
