@@ -4,7 +4,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TuiButton, TuiError, TuiIcon, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TuiCheckbox, TuiFieldErrorPipe, TuiDataListWrapper } from '@taiga-ui/kit';
-import { TuiTextareaModule, TuiSelectModule, TuiInputNumberModule } from '@taiga-ui/legacy';
 import { TuiCardLarge, TuiForm } from '@taiga-ui/layout';
 import { LayoutComponent } from '../../../../shared/components/layout/layout.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
@@ -22,7 +21,6 @@ import { Product, Category } from '../../../../core/models/product.model';
     PageHeaderComponent,
     TuiButton,
     TuiCardLarge,
-    TuiCheckbox,
     TuiDataListWrapper,
     TuiError,
     TuiFieldErrorPipe,
@@ -54,7 +52,7 @@ import { Product, Category } from '../../../../core/models/product.model';
           <form tuiForm [formGroup]="form" (ngSubmit)="onSubmit()">
             <div class="form-grid">
               <div class="form-group full-width">
-                <label tuiLabel>Nome do Produto *</label>
+                <label for="name" tuiLabel>Nome do Produto *</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -63,13 +61,13 @@ import { Product, Category } from '../../../../core/models/product.model';
                   />
                 </tui-textfield>
                 <tui-error
-                  [error]="['required'] | tuiFieldError"
+                  [error]="(['required'] | tuiFieldError | async)"
                   formControlName="name"
                 />
               </div>
 
               <div class="form-group full-width">
-                <label tuiLabel>Descrição</label>
+                <label for="description" tuiLabel>Descrição</label>
                 <tui-textfield>
                   <textarea
                     tuiTextfield
@@ -81,7 +79,7 @@ import { Product, Category } from '../../../../core/models/product.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>Preço *</label>
+                <label for="price" tuiLabel>Preço *</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -94,7 +92,7 @@ import { Product, Category } from '../../../../core/models/product.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>Custo</label>
+                <label for="cost" tuiLabel>Custo</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -107,7 +105,7 @@ import { Product, Category } from '../../../../core/models/product.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>SKU</label>
+                <label for="sku" tuiLabel>SKU</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -118,7 +116,7 @@ import { Product, Category } from '../../../../core/models/product.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>Código de Barras</label>
+                <label for="barcode" tuiLabel>Código de Barras</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -129,7 +127,7 @@ import { Product, Category } from '../../../../core/models/product.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>Tempo de Preparo (min)</label>
+                <label for="preparationTime" tuiLabel>Tempo de Preparo (min)</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -141,7 +139,7 @@ import { Product, Category } from '../../../../core/models/product.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>Unidade</label>
+                <label for="unit" tuiLabel>Unidade</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -163,7 +161,7 @@ import { Product, Category } from '../../../../core/models/product.model';
 
               @if (form.get('trackInventory')?.value) {
                 <div class="form-group">
-                  <label tuiLabel>Estoque Atual</label>
+                  <label for="currentStock" tuiLabel>Estoque Atual</label>
                   <tui-textfield>
                     <input
                       tuiTextfield
@@ -175,7 +173,7 @@ import { Product, Category } from '../../../../core/models/product.model';
                 </div>
 
                 <div class="form-group">
-                  <label tuiLabel>Estoque Mínimo</label>
+                  <label for="minStock" tuiLabel>Estoque Mínimo</label>
                   <tui-textfield>
                     <input
                       tuiTextfield
@@ -187,7 +185,7 @@ import { Product, Category } from '../../../../core/models/product.model';
                 </div>
 
                 <div class="form-group">
-                  <label tuiLabel>Estoque Máximo</label>
+                  <label for="maxStock" tuiLabel>Estoque Máximo</label>
                   <tui-textfield>
                     <input
                       tuiTextfield

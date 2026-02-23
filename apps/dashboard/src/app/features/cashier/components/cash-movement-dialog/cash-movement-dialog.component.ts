@@ -1,9 +1,9 @@
+import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TuiButton, TuiError, TuiTextfield } from '@taiga-ui/core';
 import { TuiFieldErrorPipe } from '@taiga-ui/kit';
-import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 import { TuiDialogContext } from '@taiga-ui/core';
 import { CashierService } from '../../../../core/services/cashier.service';
 import { CashMovement, MovementType } from '../../../../core/models/cashier.model';
@@ -28,7 +28,7 @@ export interface CashMovementDialogData {
     <div class="cash-movement-dialog">
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label tuiLabel>Valor (R$) *</label>
+          <label for="amount" tuiLabel>Valor (R$) *</label>
           <tui-textfield>
             <input
               tuiTextfield
@@ -40,13 +40,13 @@ export interface CashMovementDialogData {
             />
           </tui-textfield>
           <tui-error
-            [error]="['required', 'min'] | tuiFieldError"
+            [error]="(['required', 'min'] | tuiFieldError |async)"
             formControlName="amount"
           />
         </div>
 
         <div class="form-group">
-          <label tuiLabel>Descrição *</label>
+          <label for="description" tuiLabel>Descrição *</label>
           <tui-textfield>
             <input
               tuiTextfield
@@ -55,13 +55,13 @@ export interface CashMovementDialogData {
             />
           </tui-textfield>
           <tui-error
-            [error]="['required'] | tuiFieldError"
+            [error]="(['required'] | tuiFieldError | async)"
             formControlName="description"
           />
         </div>
 
         <div class="form-group">
-          <label tuiLabel>Forma de Pagamento</label>
+          <label for="paymentMethod" tuiLabel>Forma de Pagamento</label>
           <tui-textfield>
             <input
               tuiTextfield

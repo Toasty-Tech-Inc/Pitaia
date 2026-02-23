@@ -1,10 +1,10 @@
+import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
 import { ChangeDetectionStrategy, Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TuiButton, TuiDialogService, TuiIcon } from '@taiga-ui/core';
 import { TuiBadge } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
-import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
 import { LayoutComponent } from '../../../../shared/components/layout/layout.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -115,14 +115,14 @@ import { TableFormDialogComponent } from '../../components/table-form-dialog/tab
                 size="s"
                 iconStart="@tui.edit"
                 (click)="openTableDialog(table)"
-              />
+              >.</button>
               <button
                 tuiButton
                 appearance="flat"
                 size="s"
                 iconStart="@tui.trash"
                 (click)="confirmDelete(table)"
-              />
+              >.</button>
             </div>
           </div>
         } @empty {

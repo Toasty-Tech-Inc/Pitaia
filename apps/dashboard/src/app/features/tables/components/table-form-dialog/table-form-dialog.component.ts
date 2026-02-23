@@ -1,9 +1,9 @@
+import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TuiButton, TuiError, TuiTextfield } from '@taiga-ui/core';
 import { TuiCheckbox, TuiFieldErrorPipe } from '@taiga-ui/kit';
-import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 import { TuiDialogContext } from '@taiga-ui/core';
 import { TablesService } from '../../../../core/services/tables.service';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -29,7 +29,7 @@ export interface TableFormDialogData {
     <div class="table-form-dialog">
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label tuiLabel>Número da Mesa *</label>
+          <label for="number" tuiLabel>Número da Mesa *</label>
           <tui-textfield>
             <input
               tuiTextfield
@@ -38,13 +38,13 @@ export interface TableFormDialogData {
             />
           </tui-textfield>
           <tui-error
-            [error]="['required'] | tuiFieldError"
+            [error]="(['required'] | tuiFieldError | async)"
             formControlName="number"
           />
         </div>
 
         <div class="form-group">
-          <label tuiLabel>Capacidade *</label>
+          <label for="capacity" tuiLabel>Capacidade *</label>
           <tui-textfield>
             <input
               tuiTextfield
@@ -55,13 +55,13 @@ export interface TableFormDialogData {
             />
           </tui-textfield>
           <tui-error
-            [error]="['required', 'min'] | tuiFieldError"
+            [error]="(['required', 'min'] | tuiFieldError) | async"
             formControlName="capacity"
           />
         </div>
 
         <div class="form-group">
-          <label tuiLabel>Localização</label>
+          <label for="location" tuiLabel>Localização</label>
           <tui-textfield>
             <input
               tuiTextfield

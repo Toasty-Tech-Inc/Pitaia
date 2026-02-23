@@ -1,9 +1,9 @@
+import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
 import { ChangeDetectionStrategy, Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TuiButton, TuiDialogService, TuiIcon } from '@taiga-ui/core';
 import { TuiBadge } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
-import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
 import { LayoutComponent } from '../../../../shared/components/layout/layout.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { DataTableComponent, TableColumn, TableAction } from '../../../../shared/components/data-table/data-table.component';

@@ -1,9 +1,9 @@
+import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TuiButton, TuiError, TuiTextfield } from '@taiga-ui/core';
 import { TuiFieldErrorPipe } from '@taiga-ui/kit';
-import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 import { TuiDialogContext } from '@taiga-ui/core';
 import { CashierService } from '../../../../core/services/cashier.service';
 import { Cashier } from '../../../../core/models/cashier.model';
@@ -27,7 +27,7 @@ import { Cashier } from '../../../../core/models/cashier.model';
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label tuiLabel>Valor Inicial (R$) *</label>
+          <label for="openingBalance" tuiLabel>Valor Inicial (R$) *</label>
           <tui-textfield>
             <input
               tuiTextfield
@@ -39,13 +39,13 @@ import { Cashier } from '../../../../core/models/cashier.model';
             />
           </tui-textfield>
           <tui-error
-            [error]="['required', 'min'] | tuiFieldError"
+            [error]="(['required', 'min'] | tuiFieldError | async)"
             formControlName="openingBalance"
           />
         </div>
 
         <div class="form-group">
-          <label tuiLabel>Observações</label>
+          <label for="notes" tuiLabel>Observações</label>
           <tui-textfield>
             <textarea
               tuiTextfield

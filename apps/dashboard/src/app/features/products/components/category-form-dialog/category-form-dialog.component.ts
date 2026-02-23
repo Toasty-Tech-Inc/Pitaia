@@ -1,9 +1,9 @@
+import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TuiButton, TuiError, TuiTextfield } from '@taiga-ui/core';
 import { TuiCheckbox, TuiFieldErrorPipe } from '@taiga-ui/kit';
-import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 import { TuiDialogContext } from '@taiga-ui/core';
 import { CategoriesService } from '../../../../core/services/products.service';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -20,7 +20,6 @@ export interface CategoryFormDialogData {
     CommonModule,
     ReactiveFormsModule,
     TuiButton,
-    TuiCheckbox,
     TuiError,
     TuiFieldErrorPipe,
     TuiTextfield,
@@ -29,7 +28,7 @@ export interface CategoryFormDialogData {
     <div class="category-form-dialog">
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label tuiLabel>Nome *</label>
+          <label for="name" tuiLabel>Nome *</label>
           <tui-textfield>
             <input
               tuiTextfield
@@ -38,13 +37,13 @@ export interface CategoryFormDialogData {
             />
           </tui-textfield>
           <tui-error
-            [error]="['required'] | tuiFieldError"
+            [error]="(['required'] | tuiFieldError | async)"
             formControlName="name"
           />
         </div>
 
         <div class="form-group">
-          <label tuiLabel>Descrição</label>
+          <label for="name" tuiLabel>Descrição</label>
           <tui-textfield>
             <textarea
               tuiTextfield
@@ -56,7 +55,7 @@ export interface CategoryFormDialogData {
         </div>
 
         <div class="form-group">
-          <label tuiLabel>Ordem de Exibição</label>
+          <label for="name" tuiLabel>Ordem de Exibição</label>
           <tui-textfield>
             <input
               tuiTextfield

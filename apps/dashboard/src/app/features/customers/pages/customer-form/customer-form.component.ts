@@ -51,7 +51,7 @@ import { Customer } from '../../../../core/models/customer.model';
           <form tuiForm [formGroup]="form" (ngSubmit)="onSubmit()">
             <div class="form-grid">
               <div class="form-group full-width">
-                <label tuiLabel>Nome Completo *</label>
+                <label for="name" tuiLabel>Nome Completo *</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -60,13 +60,13 @@ import { Customer } from '../../../../core/models/customer.model';
                   />
                 </tui-textfield>
                 <tui-error
-                  [error]="['required'] | tuiFieldError"
+                  [error]="(['required'] | tuiFieldError | async)"
                   formControlName="name"
                 />
               </div>
 
               <div class="form-group">
-                <label tuiLabel>Email</label>
+                <label for="email" tuiLabel>Email</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -78,7 +78,7 @@ import { Customer } from '../../../../core/models/customer.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>Telefone *</label>
+                <label for="phone" tuiLabel>Telefone *</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -87,13 +87,13 @@ import { Customer } from '../../../../core/models/customer.model';
                   />
                 </tui-textfield>
                 <tui-error
-                  [error]="['required'] | tuiFieldError"
+                  [error]="(['required'] | tuiFieldError |async)"
                   formControlName="phone"
                 />
               </div>
 
               <div class="form-group">
-                <label tuiLabel>CPF</label>
+                <label for="cpf" tuiLabel>CPF</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -104,7 +104,7 @@ import { Customer } from '../../../../core/models/customer.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>Data de Nascimento</label>
+                <label for="birthDate" tuiLabel>Data de Nascimento</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -119,7 +119,7 @@ import { Customer } from '../../../../core/models/customer.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>CEP</label>
+                <label for="zipCode" tuiLabel>CEP</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -130,7 +130,7 @@ import { Customer } from '../../../../core/models/customer.model';
               </div>
 
               <div class="form-group full-width">
-                <label tuiLabel>Rua</label>
+                <label for="street" tuiLabel>Rua</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -141,7 +141,7 @@ import { Customer } from '../../../../core/models/customer.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>Número</label>
+                <label for="number" tuiLabel>Número</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -152,7 +152,7 @@ import { Customer } from '../../../../core/models/customer.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>Complemento</label>
+                <label for="complement" tuiLabel>Complemento</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -163,7 +163,7 @@ import { Customer } from '../../../../core/models/customer.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>Bairro</label>
+                <label for="neighborhood" tuiLabel>Bairro</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -174,7 +174,7 @@ import { Customer } from '../../../../core/models/customer.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>Cidade</label>
+                <label for="city" tuiLabel>Cidade</label>
                 <tui-textfield>
                   <input
                     tuiTextfield
@@ -185,7 +185,7 @@ import { Customer } from '../../../../core/models/customer.model';
               </div>
 
               <div class="form-group">
-                <label tuiLabel>Estado</label>
+                <label for="state" tuiLabel>Estado</label>
                 <tui-textfield>
                   <input
                     tuiTextfield

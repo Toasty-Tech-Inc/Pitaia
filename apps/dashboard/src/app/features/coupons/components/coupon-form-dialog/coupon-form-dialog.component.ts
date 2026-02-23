@@ -1,9 +1,9 @@
+import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TuiButton, TuiError, TuiTextfield } from '@taiga-ui/core';
 import { TuiCheckbox, TuiFieldErrorPipe, TuiRadio } from '@taiga-ui/kit';
-import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 import { TuiDialogContext } from '@taiga-ui/core';
 import { CouponsService } from '../../../../core/services/coupons.service';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -30,7 +30,7 @@ export interface CouponFormDialogData {
     <div class="coupon-form-dialog">
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label tuiLabel>Código do Cupom *</label>
+          <label for="code" tuiLabel>Código do Cupom *</label>
           <tui-textfield>
             <input
               tuiTextfield
@@ -40,13 +40,13 @@ export interface CouponFormDialogData {
             />
           </tui-textfield>
           <tui-error
-            [error]="['required'] | tuiFieldError"
+            [error]="(['required'] | tuiFieldError | async)"
             formControlName="code"
           />
         </div>
 
         <div class="form-group">
-          <label tuiLabel>Descrição</label>
+          <label for="description" tuiLabel>Descrição</label>
           <tui-textfield>
             <input
               tuiTextfield
@@ -57,7 +57,7 @@ export interface CouponFormDialogData {
         </div>
 
         <div class="form-group">
-          <label tuiLabel>Tipo de Desconto</label>
+          <label for="description" tuiLabel>Tipo de Desconto</label>
           <div class="radio-group">
             <tui-radio formControlName="discountType" [value]="DiscountType.PERCENTAGE">
               Porcentagem
@@ -69,7 +69,7 @@ export interface CouponFormDialogData {
         </div>
 
         <div class="form-group">
-          <label tuiLabel>Valor do Desconto *</label>
+          <label for="description" tuiLabel>Valor do Desconto *</label>
           <tui-textfield>
             <input
               tuiTextfield
@@ -84,7 +84,7 @@ export interface CouponFormDialogData {
 
         <div class="form-row">
           <div class="form-group">
-            <label tuiLabel>Pedido Mínimo (R$)</label>
+            <label for="description" tuiLabel>Pedido Mínimo (R$)</label>
             <tui-textfield>
               <input
                 tuiTextfield
@@ -98,7 +98,7 @@ export interface CouponFormDialogData {
           </div>
 
           <div class="form-group">
-            <label tuiLabel>Desconto Máximo (R$)</label>
+            <label for="description" tuiLabel>Desconto Máximo (R$)</label>
             <tui-textfield>
               <input
                 tuiTextfield
@@ -113,7 +113,7 @@ export interface CouponFormDialogData {
         </div>
 
         <div class="form-group">
-          <label tuiLabel>Limite de Usos</label>
+          <label for="description" tuiLabel>Limite de Usos</label>
           <tui-textfield>
             <input
               tuiTextfield
@@ -127,7 +127,7 @@ export interface CouponFormDialogData {
 
         <div class="form-row">
           <div class="form-group">
-            <label tuiLabel>Data de Início</label>
+            <label for="description" tuiLabel>Data de Início</label>
             <tui-textfield>
               <input
                 tuiTextfield
@@ -138,7 +138,7 @@ export interface CouponFormDialogData {
           </div>
 
           <div class="form-group">
-            <label tuiLabel>Data de Término</label>
+            <label for="description" tuiLabel>Data de Término</label>
             <tui-textfield>
               <input
                 tuiTextfield

@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { TuiButton, TuiIcon, TuiLink, TuiTextfield } from '@taiga-ui/core';
 import { TuiBreadcrumbs } from '@taiga-ui/kit';
-import { TuiSubheader } from '@taiga-ui/layout';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -15,7 +14,6 @@ import { FormsModule } from '@angular/forms';
     TuiButton,
     TuiIcon,
     TuiLink,
-    TuiSubheader,
     TuiTextfield,
   ],
   template: `
