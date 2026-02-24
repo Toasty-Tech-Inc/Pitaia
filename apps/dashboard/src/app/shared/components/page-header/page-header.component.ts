@@ -37,7 +37,7 @@ import { FormsModule } from '@angular/forms';
             type="text"
             [placeholder]="searchPlaceholder()"
             [ngModel]="searchValue()"
-            (ngModelChange)="onSearchChange.emit($event)"
+            (ngModelChange)="SearchChange.emit($event)"
           />
         </tui-textfield>
       }
@@ -48,7 +48,7 @@ import { FormsModule } from '@angular/forms';
           iconStart="@tui.filter"
           tuiButton
           type="button"
-          (click)="onFilter.emit()"
+          (click)="Filter.emit()"
         >
           Filtrar
         </button>
@@ -60,7 +60,7 @@ import { FormsModule } from '@angular/forms';
           iconStart="@tui.refresh-cw"
           tuiButton
           type="button"
-          (click)="onRefresh.emit()"
+          (click)="Refresh.emit()"
           [disabled]="loading()"
         >
           Atualizar
@@ -73,7 +73,7 @@ import { FormsModule } from '@angular/forms';
           [iconStart]="addIcon()"
           tuiButton
           type="button"
-          (click)="onAdd.emit()"
+          (click)="Add.emit()"
         >
           {{ addLabel() }}
         </button>
@@ -121,8 +121,8 @@ export class PageHeaderComponent {
   
   loading = input(false);
 
-  onSearchChange = output<string>();
-  onFilter = output<void>();
-  onRefresh = output<void>();
-  onAdd = output<void>();
+  SearchChange = output<string>();
+  Filter = output<void>();
+  Refresh = output<void>();
+  Add = output<void>();
 }

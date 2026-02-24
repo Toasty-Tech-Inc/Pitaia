@@ -884,7 +884,7 @@ export class OrderFormComponent implements OnInit {
     if (!code) return;
 
     this.validatingCoupon.set(true);
-    this.couponsService.validate(code, this.subtotal()).subscribe({
+    this.couponsService.validateCoupon(code, this.subtotal()).subscribe({
       next: (result) => {
         if (result.valid && result.coupon) {
           this.appliedCoupon.set(result.coupon);
