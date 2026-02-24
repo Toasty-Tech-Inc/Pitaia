@@ -5,8 +5,6 @@ import { Router } from '@angular/router';
 import { TuiButton, TuiIcon, TuiAppearance, TuiLoader, TuiTextfield } from '@taiga-ui/core';
 import { TuiBadge, TuiDataListWrapper, TuiFilterByInputPipe, TuiStringifyContentPipe } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
-import { TuiInputModule, TuiSelectModule, TuiTextareaModule, TuiComboBoxModule } from '@taiga-ui/legacy';
-
 import { LayoutComponent } from '../../../../shared/components/layout/layout.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { OrdersService } from '../../../../core/services/orders.service';
@@ -255,7 +253,7 @@ interface OrderItemForm {
                     [class.selected]="selectedTable()?.id === table.id"
                     (click)="selectTable(table)"
                   >
-                    {{ table.name }}
+                    {{ table.location }}
                   </button>
                 } @empty {
                   <p class="no-tables">Nenhuma mesa disponível</p>
@@ -890,7 +888,7 @@ export class OrderFormComponent implements OnInit {
           this.appliedCoupon.set(result.coupon);
           this.notificationService.success('Cupom aplicado com sucesso!');
         } else {
-          this.notificationService.error(result.reason || 'Cupom inválido');
+          this.notificationService.error(result.coupon?.code || 'Cupom inválido');
         }
         this.validatingCoupon.set(false);
       },

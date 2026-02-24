@@ -33,13 +33,11 @@ export class AddressRepository
     id: string,
     customerId: string,
   ): Promise<CustomerAddress> {
-    // Remover default de todos os endereços do cliente
     await this.prisma.customerAddress.updateMany({
       where: { customerId },
       data: { isDefault: false },
     });
 
-    // Definir o novo default
     return this.prisma.customerAddress.update({
       where: { id },
       data: { isDefault: true },

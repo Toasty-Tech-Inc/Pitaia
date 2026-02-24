@@ -23,7 +23,6 @@ export class AddressService implements IAddressService {
     customerId: string,
     dto: CreateAddressDto,
   ): Promise<CustomerAddress> {
-    // Se for definir como default, remover default dos outros
     if (dto.isDefault) {
       await this.prisma.customerAddress.updateMany({
         where: { customerId },
@@ -121,19 +120,15 @@ export class AddressService implements IAddressService {
     let destLat: number;
     let destLng: number;
 
-    // Determinar coordenadas de destino
     if (dto.addressId) {
-      // Usar endereço do cliente
       const address = await this.findOne(dto.addressId);
       const coords = await this.getCoordinates(address.zipCode);
       destLat = coords.lat;
       destLng = coords.lng;
     } else if (dto.latitude && dto.longitude) {
-      // Usar coordenadas fornecidas
       destLat = dto.latitude;
       destLng = dto.longitude;
     } else if (dto.zipCode) {
-      // Usar CEP
       const coords = await this.getCoordinates(dto.zipCode);
       destLat = coords.lat;
       destLng = coords.lng;
@@ -143,7 +138,6 @@ export class AddressService implements IAddressService {
       );
     }
 
-    // Calcular distância (Haversine)
     const distance = this.calculateDistance(
       Number(establishment.latitude),
       Number(establishment.longitude),
@@ -151,19 +145,17 @@ export class AddressService implements IAddressService {
       destLng,
     );
 
-    // Calcular taxa de entrega (exemplo: R$ 3 por km, mínimo R$ 5)
     const feePerKm = 3.0;
     const minimumFee = 5.0;
     const calculatedFee = distance * feePerKm;
     const fee = Math.max(calculatedFee, minimumFee);
 
-    // Estimar tempo (exemplo: 30 min + 5 min por km)
-    const baseTime = 30; // minutos
-    const timePerKm = 5; // minutos por km
+    const baseTime = 30;
+    const timePerKm = 5;
     const estimatedTime = Math.ceil(baseTime + distance * timePerKm);
 
     return {
-      distance: Math.round(distance * 100) / 100, // 2 casas decimais
+      distance: Math.round(distance * 100) / 100,
       fee: Math.round(fee * 100) / 100,
       estimatedTime,
     };
@@ -171,11 +163,6 @@ export class AddressService implements IAddressService {
 
   async getCoordinates(zipCode: string): Promise<{ lat: number; lng: number }> {
     try {
-      // Opção 1: Usar ViaCEP (gratuito, mas não retorna coordenadas)
-      // Opção 2: Usar Google Geocoding API
-      // Opção 3: Usar OpenStreetMap Nominatim (gratuito)
-
-      // Exemplo com OpenStreetMap Nominatim
       const cleanZipCode = zipCode.replace(/\D/g, '');
       const formattedZipCode = `${cleanZipCode.slice(0, 5)}-${cleanZipCode.slice(5)}`;
 
@@ -214,8 +201,7 @@ export class AddressService implements IAddressService {
     lat2: number,
     lon2: number,
   ): number {
-    // Fórmula de Haversine para calcular distância entre duas coordenadas
-    const R = 6371; // Raio da Terra em km
+    const R = 6371;
     const dLat = this.deg2rad(lat2 - lat1);
     const dLon = this.deg2rad(lon2 - lon1);
 
@@ -227,7 +213,7 @@ export class AddressService implements IAddressService {
         Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distância em km
+    const distance = R * c;
 
     return distance;
   }

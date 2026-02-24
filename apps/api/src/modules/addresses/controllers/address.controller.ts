@@ -42,8 +42,6 @@ export class AddressController {
     @CurrentUser('id') userId: string,
     @Body() createDto: CreateAddressDto,
   ) {
-    // TODO: Buscar customerId pelo userId
-    // Por enquanto, assumindo que userId = customerId
     return this.addressService.create(userId, createDto);
   }
 
@@ -102,10 +100,6 @@ export class AddressController {
     return this.addressService.remove(id);
   }
 
-  // ============================================
-  // CÁLCULO DE ENTREGA
-  // ============================================
-
   @Public()
   @Post('calculate-delivery')
   @HttpCode(HttpStatus.OK)
@@ -152,10 +146,6 @@ export class AddressController {
   geocode(@Body() geocodeDto: GeocodeAddressDto) {
     return this.addressService.getCoordinates(geocodeDto.zipCode);
   }
-
-  // ============================================
-  // BUSCA DE CEP (ViaCEP)
-  // ============================================
 
   @Public()
   @Get('viacep/:zipCode')
