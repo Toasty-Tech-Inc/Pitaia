@@ -134,7 +134,7 @@ model Product {
   currentStock     Decimal?      @db.Decimal(10, 3)
   minStock         Decimal?      @db.Decimal(10, 3)
   maxStock         Decimal?      @db.Decimal(10, 3)
-  unit             String?       // un, kg, l, etc
+  unit             String? 
   
   images           String[]
   primaryImage     String?
@@ -142,7 +142,7 @@ model Product {
   isActive         Boolean       @default(true)
   isAvailable      Boolean       @default(true)
   isFeatured       Boolean       @default(false)
-  preparationTime  Int?          // em minutos
+  preparationTime  Int? 
   
   aiGenerated      Boolean       @default(false)
   aiConfidence     Decimal?      @db.Decimal(5, 2)
@@ -520,29 +520,22 @@ model CashMovement {
 }
 
 enum CashMovementType {
-  DEPOSIT     // Depósito/Sangria
-  WITHDRAWAL  // Retirada/Suprimento
-  ADJUSTMENT  // Ajuste
+  DEPOSIT
+  WITHDRAWAL
+  ADJUSTMENT
 }
-
-// ============================================
-// CLIENTES E FIDELIDADE
-// ============================================
 
 model Customer {
   id          String    @id @default(uuid())
   
-  // Dados pessoais
   name        String
   email       String?
   phone       String    @unique
   cpf         String?   @unique
   birthDate   DateTime?
   
-  // Endereço principal
-  address     Json?     // {street, number, neighborhood, city, etc}
+  address     Json?
   
-  // Fidelidade
   loyaltyPoints Int     @default(0)
   
   isActive    Boolean   @default(true)
@@ -564,7 +557,7 @@ model CustomerAddress {
   id           String    @id @default(uuid())
   customerId   String
   
-  label        String?   // "Casa", "Trabalho", etc
+  label        String? 
   street       String
   number       String
   complement   String?
@@ -605,15 +598,11 @@ model LoyaltyTransaction {
 }
 
 enum LoyaltyTransactionType {
-  EARNED      // Ganhou pontos
-  REDEEMED    // Resgatou pontos
-  EXPIRED     // Pontos expirados
-  ADJUSTED    // Ajuste manual
+  EARNED
+  REDEEMED 
+  EXPIRED   
+  ADJUSTED 
 }
-
-// ============================================
-// CUPONS E PROMOÇÕES
-// ============================================
 
 model Coupon {
   id               String      @id @default(uuid())
@@ -621,26 +610,21 @@ model Coupon {
   code             String      @unique
   description      String?
   
-  // Tipo de desconto
   discountType     DiscountType
   discountValue    Decimal     @db.Decimal(10, 2)
   
-  // Limites
   minPurchase      Decimal?    @db.Decimal(10, 2)
   maxDiscount      Decimal?    @db.Decimal(10, 2)
   usageLimit       Int?
   usageCount       Int         @default(0)
   perCustomerLimit Int?
   
-  // Validade
   validFrom        DateTime
   validUntil       DateTime?
   
-  // Configurações
   isActive         Boolean     @default(true)
   isPublic         Boolean     @default(false)
   
-  // IA: gerado automaticamente
   aiGenerated      Boolean     @default(false)
   aiReason         String?
   
@@ -659,25 +643,18 @@ enum DiscountType {
   FIXED_AMOUNT
 }
 
-// ============================================
-// PREÇOS DINÂMICOS (IA)
-// ============================================
-
 model DynamicPrice {
   id          String    @id @default(uuid())
   productId   String
   
-  // Contexto do preço dinâmico
-  dayOfWeek   Int?      // 0-6 (domingo-sábado)
-  startTime   String?   // HH:MM
-  endTime     String?   // HH:MM
+  dayOfWeek   Int?
+  startTime   String?
+  endTime     String?
   
-  // Preço ajustado
   price       Decimal   @db.Decimal(10, 2)
-  adjustment  Decimal   @db.Decimal(5, 2) // Percentual de ajuste
+  adjustment  Decimal   @db.Decimal(5, 2)
   
-  // IA
-  reason      String?   // Motivo do ajuste (demanda, estoque, etc)
+  reason      String?
   confidence  Decimal   @db.Decimal(5, 2)
   
   isActive    Boolean   @default(true)
@@ -690,9 +667,6 @@ model DynamicPrice {
   @@map("dynamic_prices")
 }
 
-// ============================================
-// MESAS E GARÇONS
-// ============================================
 
 model Table {
   id               String        @id @default(uuid())
@@ -700,12 +674,11 @@ model Table {
   
   number           String
   capacity         Int
-  location         String?       // "Salão", "Varanda", etc
+  location         String?
   
   status           TableStatus   @default(AVAILABLE)
   isActive         Boolean       @default(true)
   
-  // QR Code para pedidos
   qrCode           String?       @unique
   
   establishment    Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
@@ -725,9 +698,6 @@ enum TableStatus {
   CLEANING
 }
 
-// ============================================
-// INTEGRAÇÕES EXTERNAS
-// ============================================
 
 model Integration {
   id               String        @id @default(uuid())
@@ -736,10 +706,8 @@ model Integration {
   name             String
   type             IntegrationType
   
-  // Credenciais (criptografadas)
   credentials      Json
   
-  // Configurações específicas
   config           Json?
   
   isActive         Boolean       @default(true)
@@ -782,10 +750,6 @@ model IntegrationLog {
   @@map("integration_logs")
 }
 
-// ============================================
-// RELATÓRIOS E ANALYTICS
-// ============================================
-
 model ActivityLog {
   id          String    @id @default(uuid())
   userId      String
@@ -805,10 +769,6 @@ model ActivityLog {
   @@index([entity, entityId])
   @@map("activity_logs")
 }
-
-// ============================================
-// CONFIGURAÇÕES E PARÂMETROS
-// ============================================
 
 model SystemConfig {
   id          String    @id @default(uuid())
