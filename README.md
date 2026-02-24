@@ -170,17 +170,4 @@ flowchart LR
 
 ---
 
-## Boas práticas e recomendações técnicas
-
-- **Eventos idempotentes**: garantir idempotência nos consumers (use dedupe keys / message IDs).
-- **Schema para eventos**: padronizar via Protobuf/Avro/JSON Schema; versionamento de eventos.
-- **CDC (Change Data Capture)**: considere usar logical replication (Debezium ou listener) se quiser consistência forte entre Postgres → MongoDB.
-- **Cache strategy**: cache-aside + invalidation via eventos (quando dados mudam, publish invalidation para Redis).
-- **Tracing**: amostragem adaptativa (ex: 1% full traces + aumento em erros) para reduzir custo de armazenamento.
-- **Métricas**: exporte histograms (p50/p95/p99), counters (requests, errors) e gauges (goroutines, heap).
-- **Segurança**: segmente redes (VPCs), use IAM roles, encrypt at rest e in transit, rotate secrets (Vault / Secrets Manager).
-- **Backups**: backups automatizados do Postgres e snapshots do Mongo; testes de restore regulares.
-- **Observability as code**: versionar dashboards (Grafana provisioning) e alertas junto com infra.
-- **Monorepo ergonomics**: usar `go.work` para múltiplos módulos Go e configurar executors Nx para `go test`, `go build` e `go vet`.
-
 ---
