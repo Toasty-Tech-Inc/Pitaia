@@ -49,3 +49,8 @@ async function bootstrap() {
 }
 
 bootstrap();
+
+export default async (req, res) => {
+  const server = await bootstrap();
+  server(req, res);
+}
