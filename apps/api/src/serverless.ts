@@ -4,7 +4,6 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app/app.module';
 import * as express from 'express';
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 const expressApp = express();
 let app: any;
@@ -36,7 +35,7 @@ async function bootstrap() {
   return expressApp;
 }
 
-export default async (req: VercelRequest, res: VercelResponse) => {
+export default async (req, res) => {
   const server = await bootstrap();
   server(req, res);
 };
