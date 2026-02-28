@@ -72,9 +72,10 @@ export interface TableFormDialogData {
         </div>
 
         <div class="form-group">
-          <tui-checkbox formControlName="isActive">
+          <label class="checkbox-label">
+            <input tuiCheckbox type="checkbox" formControlName="isActive" />
             Mesa Ativa
-          </tui-checkbox>
+          </label>
         </div>
 
         <div class="form-actions">
@@ -116,6 +117,13 @@ export interface TableFormDialogData {
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
     }
 
     .form-actions {

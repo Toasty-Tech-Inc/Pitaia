@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TuiButton, TuiError, TuiIcon, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiFieldErrorPipe, TuiDataListWrapper } from '@taiga-ui/kit';
+import { TuiCheckbox, TuiFieldErrorPipe, TuiDataListWrapper } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiForm } from '@taiga-ui/layout';
 import { LayoutComponent } from '../../../../shared/components/layout/layout.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
@@ -22,6 +22,7 @@ import { Category } from '../../../../core/models/product.model';
     PageHeaderComponent,
     TuiButton,
     TuiCardLarge,
+    TuiCheckbox,
     TuiDataListWrapper,
     TuiError,
     TuiFieldErrorPipe,
@@ -167,9 +168,10 @@ import { Category } from '../../../../core/models/product.model';
               </div>
 
               <div class="form-group">
-                <tui-checkbox formControlName="trackInventory">
+                <label class="checkbox-label">
+                  <input tuiCheckbox type="checkbox" formControlName="trackInventory" />
                   Controlar Estoque
-                </tui-checkbox>
+                </label>
               </div>
 
               @if (form.get('trackInventory')?.value) {
@@ -215,21 +217,24 @@ import { Category } from '../../../../core/models/product.model';
               </div>
 
               <div class="form-group">
-                <tui-checkbox formControlName="isActive">
+                <label class="checkbox-label">
+                  <input tuiCheckbox type="checkbox" formControlName="isActive" />
                   Produto Ativo
-                </tui-checkbox>
+                </label>
               </div>
 
               <div class="form-group">
-                <tui-checkbox formControlName="isAvailable">
+                <label class="checkbox-label">
+                  <input tuiCheckbox type="checkbox" formControlName="isAvailable" />
                   Disponível para Venda
-                </tui-checkbox>
+                </label>
               </div>
 
               <div class="form-group">
-                <tui-checkbox formControlName="isFeatured">
+                <label class="checkbox-label">
+                  <input tuiCheckbox type="checkbox" formControlName="isFeatured" />
                   Produto em Destaque
-                </tui-checkbox>
+                </label>
               </div>
             </div>
 
@@ -303,6 +308,14 @@ import { Category } from '../../../../core/models/product.model';
       font-size: 1rem;
       font-weight: 600;
       color: var(--tui-text-secondary);
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-weight: 500;
     }
 
     .form-actions {

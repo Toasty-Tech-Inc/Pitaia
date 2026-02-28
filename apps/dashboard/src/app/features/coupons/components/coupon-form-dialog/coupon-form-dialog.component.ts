@@ -146,9 +146,10 @@ export interface CouponFormDialogData {
         </div>
 
         <div class="form-group">
-          <tui-checkbox formControlName="isActive">
+          <label class="checkbox-label">
+            <input tuiCheckbox type="checkbox" formControlName="isActive" />
             Cupom Ativo
-          </tui-checkbox>
+          </label>
         </div>
 
         <div class="form-actions">
@@ -190,6 +191,13 @@ export interface CouponFormDialogData {
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
     }
 
     .form-row {
