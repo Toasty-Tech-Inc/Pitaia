@@ -3,14 +3,14 @@
   "name": "pitaia-api",
   "builds": [
     {
-      "src": "src/serverless.ts",
+      "src": "dist/apps/api/serverless.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/serverless.ts"
+      "dest": "dist/apps/api/serverless.js"
     }
   ],
   "env": {

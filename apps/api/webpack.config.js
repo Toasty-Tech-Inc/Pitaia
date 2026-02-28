@@ -1,11 +1,15 @@
 const { NxAppWebpackPlugin } = require('@nx/webpack/app-plugin');
 const { join } = require('path');
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 module.exports = {
   output: {
     path: join(__dirname, '../../dist/apps/api'),
+    filename: isProduction ? 'serverless.js' : 'main.js',
+    ...(isProduction && { libraryTarget: 'commonjs2' }),
     clean: true,
-    ...(process.env.NODE_ENV !== 'production' && {
+    ...(!isProduction && {
       devtoolModuleFilenameTemplate: '[absolute-resource-path]',
     }),
   },
@@ -13,7 +17,7 @@ module.exports = {
     new NxAppWebpackPlugin({
       target: 'node',
       compiler: 'tsc',
-      main: './src/main.ts',
+      main: isProduction ? './src/serverless.ts' : './src/main.ts',
       tsConfig: './tsconfig.app.json',
       assets: ['./src/assets'],
       optimization: false,
