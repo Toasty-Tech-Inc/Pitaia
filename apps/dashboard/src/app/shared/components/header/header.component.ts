@@ -16,7 +16,7 @@ import {
   TuiBadgeNotification,
 } from '@taiga-ui/kit';
 import { TuiNavigation } from '@taiga-ui/layout';
-import { tuiAsPortal, TuiPortals } from '@taiga-ui/cdk';
+import { tuiAsPortal, TuiPortals, TuiActiveZone } from '@taiga-ui/cdk';
 import { UserService } from '../../../services/user.service';
 
 @Component({
@@ -26,6 +26,7 @@ import { UserService } from '../../../services/user.service';
     CommonModule,
     KeyValuePipe,
     RouterLink,
+    TuiActiveZone,
     TuiAppearance,
     TuiAvatar,
     TuiBadgeNotification,
@@ -45,6 +46,7 @@ import { UserService } from '../../../services/user.service';
 export class HeaderComponent extends TuiPortals {
   private userService = inject(UserService);
   protected open = false;
+  protected dropdownOpen = false;
   protected notifications = signal(3);
   protected user = this.userService.getUserInfo();
 

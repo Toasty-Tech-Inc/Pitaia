@@ -90,13 +90,17 @@
         Impressão
     </button>
 
-    <tui-dropdown>
+    <div
+        [tuiDropdown]="userMenu"
+        [tuiDropdownManual]="dropdownOpen"
+        (tuiActiveZoneChange)="dropdownOpen = $event"
+    >
         <button
             tuiIconButton
             type="button"
-            [tuiDropdown]="userMenu"
+            (click)="dropdownOpen = !dropdownOpen"
         >
-            <tui-avatar [text]="user()?.name || 'User'" />
+            <tui-avatar [src]="null" [round]="true" />
         </button>
         <ng-template #userMenu>
             <tui-data-list>
@@ -106,6 +110,6 @@
                 </button>
             </tui-data-list>
         </ng-template>
-    </tui-dropdown>
+    </div>
 </header>
 

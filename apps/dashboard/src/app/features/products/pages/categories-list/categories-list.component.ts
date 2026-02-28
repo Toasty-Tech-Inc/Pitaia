@@ -34,7 +34,7 @@ import { CategoryFormDialogComponent } from '../../components/category-form-dial
         [loading]="loading()"
         searchPlaceholder="Buscar categorias..."
         addLabel="Nova Categoria"
-        (onSearchChange)="onSearch($event)"
+        (SearchChange)="onSearch($event)"
         (onRefresh)="loadCategories()"
         (onAdd)="openCategoryDialog()"
       />

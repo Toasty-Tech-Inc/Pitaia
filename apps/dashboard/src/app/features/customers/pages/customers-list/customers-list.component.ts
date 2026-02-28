@@ -33,7 +33,7 @@ import { Customer } from '../../../../core/models/customer.model';
         [loading]="loading()"
         searchPlaceholder="Buscar clientes..."
         addLabel="Novo Cliente"
-        (onSearchChange)="onSearch($event)"
+        (SearchChange)="onSearch($event)"
         (onRefresh)="loadCustomers()"
         (onAdd)="navigateToCreate()"
       />
