@@ -1,12 +1,13 @@
 // src/serverless.ts
 import { NestFactory } from '@nestjs/core';
+import { INestApplication } from '@nestjs/common';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app/app.module';
-import * as express from 'express';
+import express, { Request, Response } from 'express';
 
 const expressApp = express();
-let app: any;
+let app: INestApplication | null = null;
 
 async function bootstrap() {
   if (!app) {
@@ -35,7 +36,7 @@ async function bootstrap() {
   return expressApp;
 }
 
-export default async (req, res) => {
+export default async (req: Request, res: Response) => {
   const server = await bootstrap();
   server(req, res);
 };
