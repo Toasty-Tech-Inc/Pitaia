@@ -7,7 +7,7 @@ import { TuiCardLarge } from '@taiga-ui/layout';
 
 import { LayoutComponent } from '../../../../shared/components/layout/layout.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
-import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { OrdersService } from '../../../../core/services/orders.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Order, OrderStatus, OrderType, OrderSource } from '../../../../core/models/order.model';
@@ -698,16 +698,16 @@ export class OrderDetailComponent implements OnInit {
   }
 
   confirmCancel(): void {
-    this.dialogService.open(
+    this.dialogService.open<boolean>(
       new PolymorpheusComponent(ConfirmDialogComponent),
       {
         data: {
           title: 'Cancelar Pedido',
           message: `Tem certeza que deseja cancelar o pedido #${this.order()?.orderNumber}? Esta ação não pode ser desfeita.`,
-          confirmText: 'Cancelar Pedido',
-          cancelText: 'Voltar',
-          type: 'danger',
-        },
+          confirmLabel: 'Cancelar Pedido',
+          cancelLabel: 'Voltar',
+          confirmAppearance: 'destructive',
+        } as ConfirmDialogData,
         dismissible: true,
         size: 's',
       }
