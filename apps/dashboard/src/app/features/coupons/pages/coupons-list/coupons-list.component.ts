@@ -33,9 +33,9 @@ import { CouponFormDialogComponent } from '../../components/coupon-form-dialog/c
         [loading]="loading()"
         searchPlaceholder="Buscar cupons..."
         addLabel="Novo Cupom"
-        (onSearchChange)="onSearch($event)"
-        (onRefresh)="loadCoupons()"
-        (onAdd)="openCouponDialog()"
+        (SearchChange)="onSearch($event)"
+        (Refresh)="loadCoupons()"
+        (Add)="openCouponDialog()"
       />
 
       <div class="coupons-stats">

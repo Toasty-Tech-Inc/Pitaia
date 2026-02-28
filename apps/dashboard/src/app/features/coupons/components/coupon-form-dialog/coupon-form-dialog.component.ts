@@ -59,12 +59,8 @@ export interface CouponFormDialogData {
         <div class="form-group">
           <label for="description" tuiLabel>Tipo de Desconto</label>
           <div class="radio-group">
-            <tui-radio formControlName="discountType" [value]="DiscountType.PERCENTAGE">
-              Porcentagem
-            </tui-radio>
-            <tui-radio formControlName="discountType" [value]="DiscountType.FIXED">
-              Valor Fixo
-            </tui-radio>
+            <input tuiRadio type="radio" formControlName="discountType" [value]="DiscountType.PERCENTAGE" />
+            <input tuiRadio type="radio" formControlName="discountType" [value]="DiscountType.FIXED" />
           </div>
         </div>
 

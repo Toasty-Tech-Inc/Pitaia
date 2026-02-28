@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TuiButton, TuiIcon, TuiAppearance, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiBadge, TuiDataListWrapper, TuiFilterByInputPipe, TuiStringifyContentPipe } from '@taiga-ui/kit';
+import { TuiButton, TuiIcon, TuiAppearance, TuiLoader, TuiTextfield, TuiDataList, TuiDropdown } from '@taiga-ui/core';
+import { TuiBadge } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
 import { LayoutComponent } from '../../../../shared/components/layout/layout.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
@@ -33,6 +33,7 @@ interface OrderItemForm {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     TuiButton,
     TuiIcon,
     TuiAppearance,
@@ -40,22 +41,18 @@ interface OrderItemForm {
     TuiCardLarge,
     TuiLoader,
     TuiTextfield,
-    TuiDataListWrapper,
-    TuiFilterByInputPipe,
-    TuiStringifyContentPipe,
+    TuiDataList,
+    TuiDropdown,
     LayoutComponent,
     PageHeaderComponent,
   ],
   template: `
     <app-layout>
       <app-page-header
-        title="Novo Pedido"
-        subtitle="Crie um novo pedido para o estabelecimento"
+        [breadcrumbs]="['Dashboard', 'Pedidos', 'Novo Pedido']"
         [showSearch]="false"
-        [breadcrumbs]="[
-          { label: 'Pedidos', link: '/orders' },
-          { label: 'Novo Pedido' }
-        ]"
+        [showFilter]="false"
+        [showAdd]="false"
       >
         <ng-container actions>
           <button
@@ -116,19 +113,33 @@ interface OrderItemForm {
               @for (item of items(); track $index; let i = $index) {
                 <div class="item-row">
                   <div class="item-product">
-                    <tui-combo-box
-                      [stringify]="stringifyProduct"
-                      [tuiTextfieldLabelOutside]="true"
-                      [(ngModel)]="item.product"
-                      (ngModelChange)="onProductSelect(i, $event)"
+                    <div
+                      tuiDropdownOpen
+                      [tuiDropdown]="productDropdown"
+                      [(tuiDropdownOpen)]="productDropdownOpen[i]"
                     >
-                      Produto
-                      <tui-data-list-wrapper
-                        *tuiDataList
-                        [items]="products() | tuiFilterByInput"
-                        [itemContent]="stringifyProduct | tuiStringifyContent"
-                      />
-                    </tui-combo-box>
+                      <button
+                        tuiButton
+                        appearance="outline"
+                        type="button"
+                        class="product-select-btn"
+                      >
+                        {{ item.product?.name || 'Selecionar Produto' }}
+                        <tui-icon icon="@tui.chevron-down" />
+                      </button>
+                    </div>
+                    <ng-template #productDropdown>
+                      <tui-data-list>
+                        @for (product of products(); track product.id) {
+                          <button
+                            tuiOption
+                            (click)="onProductSelect(i, product); productDropdownOpen[i] = false"
+                          >
+                            {{ product.name }} - {{ product.price | currency:'BRL':'symbol':'1.2-2' }}
+                          </button>
+                        }
+                      </tui-data-list>
+                    </ng-template>
                   </div>
 
                   <div class="item-quantity">
@@ -208,18 +219,33 @@ interface OrderItemForm {
           <!-- Customer -->
           <div tuiCardLarge tuiAppearance="floating" class="form-card">
             <h3>Cliente</h3>
-            <tui-combo-box
-              [stringify]="stringifyCustomer"
-              [tuiTextfieldLabelOutside]="true"
-              [(ngModel)]="selectedCustomer"
+            <div
+              tuiDropdownOpen
+              [tuiDropdown]="customerDropdown"
+              [(tuiDropdownOpen)]="customerDropdownOpen"
             >
-              Buscar cliente
-              <tui-data-list-wrapper
-                *tuiDataList
-                [items]="customers() | tuiFilterByInput"
-                [itemContent]="stringifyCustomer | tuiStringifyContent"
-              />
-            </tui-combo-box>
+              <button
+                tuiButton
+                appearance="outline"
+                type="button"
+                class="customer-select-btn"
+              >
+                {{ selectedCustomer()?.name || 'Selecionar Cliente' }}
+                <tui-icon icon="@tui.chevron-down" />
+              </button>
+            </div>
+            <ng-template #customerDropdown>
+              <tui-data-list>
+                @for (customer of customers(); track customer.id) {
+                  <button
+                    tuiOption
+                    (click)="selectCustomer(customer); customerDropdownOpen = false"
+                  >
+                    {{ customer.name }} - {{ customer.phone }}
+                  </button>
+                }
+              </tui-data-list>
+            </ng-template>
 
             @if (selectedCustomer()) {
               <div class="selected-customer">
@@ -292,12 +318,10 @@ interface OrderItemForm {
           <div tuiCardLarge tuiAppearance="floating" class="form-card">
             <h3>Cupom de Desconto</h3>
             <div class="coupon-input">
-              <tui-input
+              <input
+                tuiTextfield
                 [(ngModel)]="couponCode"
-                [tuiTextfieldLabelOutside]="true"
-              >
-                Código do cupom
-              </tui-input>
+              />
               <button
                 tuiButton
                 appearance="outline"
@@ -480,6 +504,12 @@ interface OrderItemForm {
 
     .remove-btn {
       color: var(--tui-status-negative);
+    }
+
+    .product-select-btn,
+    .customer-select-btn {
+      width: 100%;
+      justify-content: space-between;
     }
 
     .empty-items {
@@ -704,6 +734,10 @@ export class OrderFormComponent implements OnInit {
   // UI state
   saving = signal(false);
   validatingCoupon = signal(false);
+  
+  // Dropdown state
+  productDropdownOpen: boolean[] = [];
+  customerDropdownOpen = false;
 
   // Order types options
   orderTypes = [
@@ -732,10 +766,6 @@ export class OrderFormComponent implements OnInit {
   total = computed(() => {
     return this.subtotal() - this.discount() + this.deliveryFee();
   });
-
-  // Stringify functions for combo boxes
-  stringifyProduct = (product: Product) => product?.name || '';
-  stringifyCustomer = (customer: Customer) => customer ? `${customer.name} - ${customer.phone}` : '';
 
   constructor() {
     this.form = this.fb.group({
@@ -875,6 +905,10 @@ export class OrderFormComponent implements OnInit {
   clearCustomer(): void {
     this.selectedCustomer.set(null);
     this.selectedAddressId.set(null);
+  }
+
+  selectCustomer(customer: Customer): void {
+    this.selectedCustomer.set(customer);
   }
 
   applyCoupon(): void {
