@@ -11,6 +11,7 @@ import { DataTableComponent, TableColumn, TableAction } from '../../../../shared
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ProductsService } from '../../../../core/services/products.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { UserService } from '../../../../services/user.service';
 import { Product } from '../../../../core/models/product.model';
 
 @Component({
@@ -36,8 +37,8 @@ import { Product } from '../../../../core/models/product.model';
         searchPlaceholder="Buscar produtos..."
         addLabel="Novo Produto"
         (SearchChange)="onSearch($event)"
-        (onRefresh)="loadProducts()"
-        (onAdd)="navigateToCreate()"
+        (Refresh)="loadProducts()"
+        (Add)="navigateToCreate()"
       />
 
       <div class="products-stats">
@@ -120,6 +121,7 @@ import { Product } from '../../../../core/models/product.model';
 export class ProductsListComponent implements OnInit {
   private productsService = inject(ProductsService);
   private notificationService = inject(NotificationService);
+  private userService = inject(UserService);
   private dialogService = inject(TuiDialogService);
   private router = inject(Router);
 
@@ -173,10 +175,12 @@ export class ProductsListComponent implements OnInit {
 
   loadProducts(): void {
     this.loading.set(true);
+    const establishmentId = this.userService.getEstablishmentId();
     this.productsService.getAll({
       page: this.currentPage(),
       limit: this.pageSize(),
       search: this.searchTerm() || undefined,
+      establishmentId: establishmentId || undefined,
     }).subscribe({
       next: (response) => {
         this.products.set(response.data);

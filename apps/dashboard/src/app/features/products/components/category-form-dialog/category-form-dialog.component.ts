@@ -7,6 +7,7 @@ import { TuiCheckbox, TuiFieldErrorPipe } from '@taiga-ui/kit';
 import { TuiDialogContext } from '@taiga-ui/core';
 import { CategoriesService } from '../../../../core/services/products.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { UserService } from '../../../../services/user.service';
 import { Category } from '../../../../core/models/product.model';
 
 export interface CategoryFormDialogData {
@@ -133,6 +134,7 @@ export class CategoryFormDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private categoriesService = inject(CategoriesService);
   private notificationService = inject(NotificationService);
+  private userService = inject(UserService);
   readonly context = inject<TuiDialogContext<Category | null, CategoryFormDialogData>>(POLYMORPHEUS_CONTEXT);
 
   protected saving = signal(false);
@@ -159,6 +161,17 @@ export class CategoryFormDialogComponent implements OnInit {
     this.saving.set(true);
     const data = this.form.value;
     const category = this.context.data?.category;
+
+    // Add establishmentId when creating a new category
+    if (!category) {
+      const establishmentId = this.userService.getEstablishmentId();
+      if (!establishmentId) {
+        this.notificationService.error('Estabelecimento não selecionado');
+        this.saving.set(false);
+        return;
+      }
+      data.establishmentId = establishmentId;
+    }
 
     const request = category
       ? this.categoriesService.update(category.id, data)

@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
 import { TuiNavigation } from '@taiga-ui/layout';
 import { HeaderComponent } from '../header/header.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -10,7 +9,6 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
   standalone: true,
   imports: [
     CommonModule,
-    RouterOutlet,
     TuiNavigation,
     HeaderComponent,
     SidebarComponent,
@@ -24,7 +22,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
       <app-sidebar [expanded]="expanded()" [activeOrders]="0" />
 
       <main tuiNavigationMain class="pitaia-main">
-        <router-outlet />
+        <ng-content />
       </main>
     </div>
   `,

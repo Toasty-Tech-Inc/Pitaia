@@ -11,6 +11,7 @@ import { DataTableComponent, TableColumn, TableAction } from '../../../../shared
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { CategoriesService } from '../../../../core/services/products.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { UserService } from '../../../../services/user.service';
 import { Category } from '../../../../core/models/product.model';
 import { CategoryFormDialogComponent } from '../../components/category-form-dialog/category-form-dialog.component';
 
@@ -35,8 +36,8 @@ import { CategoryFormDialogComponent } from '../../components/category-form-dial
         searchPlaceholder="Buscar categorias..."
         addLabel="Nova Categoria"
         (SearchChange)="onSearch($event)"
-        (onRefresh)="loadCategories()"
-        (onAdd)="openCategoryDialog()"
+        (Refresh)="loadCategories()"
+        (Add)="openCategoryDialog()"
       />
 
       <app-data-table
@@ -58,6 +59,7 @@ import { CategoryFormDialogComponent } from '../../components/category-form-dial
 export class CategoriesListComponent implements OnInit {
   private categoriesService = inject(CategoriesService);
   private notificationService = inject(NotificationService);
+  private userService = inject(UserService);
   private dialogService = inject(TuiDialogService);
   private router = inject(Router);
 
@@ -102,10 +104,12 @@ export class CategoriesListComponent implements OnInit {
 
   loadCategories(): void {
     this.loading.set(true);
+    const establishmentId = this.userService.getEstablishmentId();
     this.categoriesService.getAll({
       page: this.currentPage(),
       limit: this.pageSize(),
       search: this.searchTerm() || undefined,
+      establishmentId: establishmentId || undefined,
     }).subscribe({
       next: (response) => {
         this.categories.set(response.data);

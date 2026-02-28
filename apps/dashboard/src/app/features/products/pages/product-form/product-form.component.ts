@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TuiButton, TuiError, TuiIcon, TuiLoader, TuiTextfield } from '@taiga-ui/core';
-import { TuiCheckbox, TuiFieldErrorPipe, TuiDataListWrapper } from '@taiga-ui/kit';
+import { TuiFieldErrorPipe, TuiDataListWrapper } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiForm } from '@taiga-ui/layout';
 import { LayoutComponent } from '../../../../shared/components/layout/layout.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { ProductsService, CategoriesService } from '../../../../core/services/products.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { Product, Category } from '../../../../core/models/product.model';
+import { UserService } from '../../../../services/user.service';
+import { Category } from '../../../../core/models/product.model';
 
 @Component({
   selector: 'app-product-form',
@@ -75,6 +76,18 @@ import { Product, Category } from '../../../../core/models/product.model';
                     placeholder="Descrição detalhada do produto"
                     rows="3"
                   ></textarea>
+                </tui-textfield>
+              </div>
+
+              <div class="form-group">
+                <label tuiLabel for="categoryId">Categoria</label>
+                <tui-textfield>
+                  <select tuiTextfield formControlName="categoryId" id="categoryId">
+                    <option value="">Selecione uma categoria</option>
+                    @for (category of categories(); track category.id) {
+                      <option [value]="category.id">{{ category.name }}</option>
+                    }
+                  </select>
                 </tui-textfield>
               </div>
 
@@ -321,6 +334,7 @@ export class ProductFormComponent implements OnInit {
   private productsService = inject(ProductsService);
   private categoriesService = inject(CategoriesService);
   private notificationService = inject(NotificationService);
+  private userService = inject(UserService);
 
   protected loading = signal(false);
   protected saving = signal(false);
@@ -373,7 +387,11 @@ export class ProductFormComponent implements OnInit {
   }
 
   private loadCategories(): void {
-    this.categoriesService.getAll({ limit: 100 }).subscribe({
+    const establishmentId = this.userService.getEstablishmentId();
+    this.categoriesService.getAll({ 
+      limit: 100, 
+      establishmentId: establishmentId || undefined,
+    }).subscribe({
       next: (response) => {
         this.categories.set(response.data);
       },
@@ -386,8 +404,19 @@ export class ProductFormComponent implements OnInit {
     this.saving.set(true);
     const data = this.form.value;
 
+    // Add establishmentId when creating a new product
+    if (!this.isEditing()) {
+      const establishmentId = this.userService.getEstablishmentId();
+      if (!establishmentId) {
+        this.notificationService.error('Estabelecimento não selecionado');
+        this.saving.set(false);
+        return;
+      }
+      data.establishmentId = establishmentId;
+    }
+
     const request = this.isEditing()
-      ? this.productsService.update(this.productId()!, data)
+      ? this.productsService.update(this.productId() as string, data)
       : this.productsService.create(data);
 
     request.subscribe({
