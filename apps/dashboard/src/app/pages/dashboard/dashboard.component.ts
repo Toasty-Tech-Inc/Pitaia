@@ -16,6 +16,8 @@ import { SidebarComponent } from '../../shared/components/sidebar/sidebar.compon
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { OrdersService } from '../../core/services';
 import { Order, OrderStatus } from '../../core/models';
+import { UserService } from '../../services/user.service';
+import { PaginatedResponse } from '../../core/models/api-response.model';
 
 
 @Component({
@@ -43,6 +45,7 @@ import { Order, OrderStatus } from '../../core/models';
 })
 export class DashboardComponent implements OnInit {
   private ordersService = inject(OrdersService);
+  private userService = inject(UserService);
   
   protected expanded = signal(false);
   protected readonly breadcrumbs = ['Dashboard', 'Pedidos', 'Gestão'];
@@ -59,15 +62,20 @@ export class DashboardComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    // TODO: Get establishmentId from user service or context
-    const establishmentId = 'your-establishment-id';
+    const establishmentId = this.userService.getEstablishmentId();
+    
+    if (!establishmentId) {
+      this.error.set('Nenhum estabelecimento selecionado');
+      this.loading.set(false);
+      return;
+    }
 
     this.ordersService.getAll({ establishmentId, limit: 50 }).subscribe({
-      next: (response: any) => {
+      next: (response: PaginatedResponse<Order>) => {
         this.organizeOrdersIntoColumns(response.data);
         this.loading.set(false);
       },
-      error: (err: any) => {
+      error: (err: Error) => {
         this.error.set('Erro ao carregar pedidos');
         this.loading.set(false);
         console.error(err);
@@ -132,7 +140,7 @@ export class DashboardComponent implements OnInit {
           next: () => {
             this.loadOrders(); // Reload to sync with backend
           },
-          error: (err: any) => {
+          error: (err: Error) => {
             console.error('Error updating order status:', err);
             // Revert the change on error
             transferArrayItem(

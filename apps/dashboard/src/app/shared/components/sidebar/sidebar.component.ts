@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import {
   TuiBadge,
   TuiChevron,
@@ -22,7 +22,6 @@ interface MenuItem {
   imports: [
     CommonModule,
     RouterLink,
-    RouterLinkActive,
     TuiBadge,
     TuiChevron,
     TuiIcon,

@@ -44,17 +44,28 @@ import {TuiLink} from '@taiga-ui/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Login {
-  private userService = inject(UserService)
-      protected readonly form = new FormGroup({
-        email: new FormControl('', Validators.required),
-        password: new FormControl(''),
-        subscribe: new FormControl(false),
-        basic: new FormControl(true),
-    });
+  private userService = inject(UserService);
 
-    login() {
-        console.log(this.form.value)
-        if (this.form.invalid || this.form.controls.basic.value || !this.form.value.email || !this.form.value.password) return
-        this.userService.login(this.form.value.email, this.form.value.password)
-    }
+  protected readonly form = new FormGroup({
+    email: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required),
+    subscribe: new FormControl(false),
+    basic: new FormControl(true),
+  });
+
+  login(): void {
+    if (this.form.invalid) return;
+    
+    const { email, password } = this.form.value;
+    if (!email || !password) return;
+
+    this.userService.login(email, password).subscribe({
+      next: () => {
+        console.log('Login bem sucedido!');
+      },
+      error: (err) => {
+        console.error('Erro no login:', err);
+      },
+    });
+  }
 }

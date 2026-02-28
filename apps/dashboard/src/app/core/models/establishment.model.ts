@@ -1,19 +1,32 @@
 export interface Establishment {
   id: string;
-  ownerId: string;
+  ownerId?: string;
   name: string;
-  slug: string;
+  tradeName?: string;
+  slug?: string;
   description?: string;
+  cnpj?: string;
   logo?: string;
   coverImage?: string;
   phone?: string;
   email?: string;
   document?: string;
+  street?: string;
+  number?: string;
+  complement?: string;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  latitude?: number;
+  longitude?: number;
   address?: EstablishmentAddress;
   businessHours?: BusinessHours[];
   settings?: EstablishmentSettings;
   isActive: boolean;
-  isOpen: boolean;
+  isOpen?: boolean;
+  timezone?: string;
+  currency?: string;
   createdAt: Date;
   updatedAt: Date;
 }

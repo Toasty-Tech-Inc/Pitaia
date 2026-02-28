@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } 
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TuiButton, TuiIcon, TuiAppearance, TuiLoader, TuiTextfield, TuiDataList, TuiDropdown } from '@taiga-ui/core';
-import { TuiBadge } from '@taiga-ui/kit';
+import { TuiButton, TuiIcon, TuiAppearance, TuiLoader, TuiDataList, TuiDropdown, TuiTextfield } from '@taiga-ui/core';
+import { TuiBadge, TuiTextarea } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
 import { LayoutComponent } from '../../../../shared/components/layout/layout.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
@@ -13,6 +13,7 @@ import { CustomersService } from '../../../../core/services/customers.service';
 import { TablesService } from '../../../../core/services/tables.service';
 import { CouponsService } from '../../../../core/services/coupons.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { UserService } from '../../../../services/user.service';
 import { Order, OrderType, OrderSource } from '../../../../core/models/order.model';
 import { Product } from '../../../../core/models/product.model';
 import { Customer } from '../../../../core/models/customer.model';
@@ -40,9 +41,10 @@ interface OrderItemForm {
     TuiBadge,
     TuiCardLarge,
     TuiLoader,
-    TuiTextfield,
     TuiDataList,
     TuiDropdown,
+    TuiTextfield,
+    TuiTextarea,
     LayoutComponent,
     PageHeaderComponent,
   ],
@@ -201,14 +203,16 @@ interface OrderItemForm {
             <h3>Observações</h3>
             <form [formGroup]="form">
               <div class="form-row">
-                <tui-textarea formControlName="notes">
-                  Observações do Cliente
-                </tui-textarea>
+                <label tuiLabel for="notes">Observações do Cliente</label>
+                <tui-textfield>
+                  <textarea tuiTextarea id="notes" formControlName="notes" rows="3"></textarea>
+                </tui-textfield>
               </div>
               <div class="form-row">
-                <tui-textarea formControlName="kitchenNotes">
-                  Observações para Cozinha
-                </tui-textarea>
+                <label tuiLabel for="kitchenNotes">Observações para Cozinha</label>
+                <tui-textfield>
+                  <textarea tuiTextarea id="kitchenNotes" formControlName="kitchenNotes" rows="3"></textarea>
+                </tui-textfield>
               </div>
             </form>
           </div>
@@ -319,8 +323,11 @@ interface OrderItemForm {
             <h3>Cupom de Desconto</h3>
             <div class="coupon-input">
               <input
-                tuiTextfield
-                [(ngModel)]="couponCode"
+                type="text"
+                class="coupon-input-field"
+                [ngModel]="couponCode()"
+                (ngModelChange)="couponCode.set($event)"
+                placeholder="Digite o cupom"
               />
               <button
                 tuiButton
@@ -651,8 +658,24 @@ interface OrderItemForm {
       display: flex;
       gap: 0.5rem;
 
-      tui-input {
+      .coupon-input-field {
         flex: 1;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--tui-border-normal);
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        background: var(--tui-background-base);
+        color: var(--tui-text-primary);
+        outline: none;
+        transition: border-color 0.2s;
+
+        &:focus {
+          border-color: var(--tui-border-focus);
+        }
+
+        &::placeholder {
+          color: var(--tui-text-tertiary);
+        }
       }
     }
 
@@ -711,6 +734,7 @@ export class OrderFormComponent implements OnInit {
   private tablesService = inject(TablesService);
   private couponsService = inject(CouponsService);
   private notificationService = inject(NotificationService);
+  private userService = inject(UserService);
 
   protected readonly OrderType = OrderType;
 
@@ -783,8 +807,14 @@ export class OrderFormComponent implements OnInit {
   }
 
   private loadProducts(): void {
+    const establishmentId = this.userService.getEstablishmentId();
+    if (!establishmentId) {
+      this.notificationService.error('Nenhum estabelecimento selecionado');
+      return;
+    }
+
     this.productsService.getAll({
-      establishmentId: 'current', // TODO: Get from UserService
+      establishmentId,
       isActive: true,
       isAvailable: true,
     }).subscribe({
@@ -811,8 +841,11 @@ export class OrderFormComponent implements OnInit {
   }
 
   private loadTables(): void {
+    const establishmentId = this.userService.getEstablishmentId();
+    if (!establishmentId) return;
+
     this.tablesService.getAll({
-      establishmentId: 'current', // TODO: Get from UserService
+      establishmentId,
       status: TableStatus.AVAILABLE,
       isActive: true,
     }).subscribe({
@@ -944,6 +977,12 @@ export class OrderFormComponent implements OnInit {
       return;
     }
 
+    const establishmentId = this.userService.getEstablishmentId();
+    if (!establishmentId) {
+      this.notificationService.error('Nenhum estabelecimento selecionado');
+      return;
+    }
+
     this.saving.set(true);
 
     const formValue = this.form.value;
@@ -957,7 +996,7 @@ export class OrderFormComponent implements OnInit {
       }));
 
     const order: Partial<Order> = {
-      establishmentId: 'current', // TODO: Get from UserService
+      establishmentId,
       type: formValue.type,
       source: formValue.source,
       customerId: this.selectedCustomer()?.id,

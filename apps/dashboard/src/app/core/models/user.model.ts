@@ -1,3 +1,14 @@
+import { Establishment } from './establishment.model';
+
+export interface UserEstablishment {
+  id: string;
+  establishmentId: string;
+  userId: string;
+  role: UserRole;
+  createdAt: Date;
+  establishment: Establishment;
+}
+
 export interface User {
   id: string;
   email: string;
@@ -10,6 +21,7 @@ export interface User {
   lastLogin?: Date;
   createdAt: Date;
   updatedAt: Date;
+  establishments?: UserEstablishment[];
 }
 
 export enum UserRole {
