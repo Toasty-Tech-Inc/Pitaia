@@ -35,7 +35,7 @@ import { Product } from '../../../../core/models/product.model';
         [loading]="loading()"
         searchPlaceholder="Buscar produtos..."
         addLabel="Novo Produto"
-        (onSearchChange)="onSearch($event)"
+        (SearchChange)="onSearch($event)"
         (onRefresh)="loadProducts()"
         (onAdd)="navigateToCreate()"
       />

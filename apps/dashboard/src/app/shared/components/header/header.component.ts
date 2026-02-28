@@ -14,8 +14,6 @@ import {
 import {
   TuiAvatar,
   TuiBadgeNotification,
-  TuiOptGroup,
-  TuiOption,
 } from '@taiga-ui/kit';
 import { TuiNavigation } from '@taiga-ui/layout';
 import { tuiAsPortal, TuiPortals } from '@taiga-ui/cdk';
@@ -37,8 +35,6 @@ import { UserService } from '../../../services/user.service';
     TuiIcon,
     TuiLink,
     TuiNavigation,
-    TuiOptGroup,
-    TuiOption,
     TuiTextfield,
   ],
   templateUrl: './header.component.html',
