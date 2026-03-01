@@ -35,7 +35,7 @@ import { Customer } from '../../../../core/models/customer.model';
         addLabel="Novo Cliente"
         (SearchChange)="onSearch($event)"
         (onRefresh)="loadCustomers()"
-        (onAdd)="navigateToCreate()"
+        (Add)="navigateToCreate()"
       />
 
       <div class="customers-stats">

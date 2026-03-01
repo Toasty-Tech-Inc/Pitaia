@@ -3,6 +3,7 @@ import { Product, Prisma } from '@prisma/client';
 import { PrismaService } from '../../../database/prisma.service';
 import { BaseRepository } from '../../../common/repositories/base.repository';
 import { IProductRepository } from '../contracts/product-repository.interface';
+import { IPaginationParams, IPaginatedResult } from '../../../common/contracts/base-repository.interface';
 
 @Injectable()
 export class ProductRepository
@@ -123,7 +124,7 @@ export class ProductRepository
   }
 
   // Override findAll to include relations
-  async findAll(params?: any): Promise<Product[]> {
+  async findAll(params?: Prisma.ProductFindManyArgs): Promise<Product[]> {
     return this.prisma.product.findMany({
       ...params,
       include: {
@@ -137,5 +138,34 @@ export class ProductRepository
         },
       },
     });
+  }
+
+  // Override paginate to include category relation
+  async paginate(params: IPaginationParams & Record<string, unknown>): Promise<IPaginatedResult<Product>> {
+    const { page = 1, limit = 10, orderBy, order = 'desc', ...filters } = params;
+
+    const skip = (page - 1) * limit;
+    const take = limit;
+
+    const [data, total] = await Promise.all([
+      this.prisma.product.findMany({
+        skip,
+        take,
+        where: filters as Prisma.ProductWhereInput,
+        orderBy: orderBy ? { [orderBy]: order } : { createdAt: 'desc' },
+        include: {
+          category: true,
+        },
+      }),
+      this.prisma.product.count({ where: filters as Prisma.ProductWhereInput }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 }

@@ -115,33 +115,18 @@ interface OrderItemForm {
               @for (item of items(); track $index; let i = $index) {
                 <div class="item-row">
                   <div class="item-product">
-                    <div
-                      tuiDropdownOpen
-                      [tuiDropdown]="productDropdown"
-                      [(tuiDropdownOpen)]="productDropdownOpen[i]"
+                    <select 
+                      class="product-select"
+                      [ngModel]="item.productId"
+                      (ngModelChange)="onProductSelectById(i, $event)"
                     >
-                      <button
-                        tuiButton
-                        appearance="outline"
-                        type="button"
-                        class="product-select-btn"
-                      >
-                        {{ item.product?.name || 'Selecionar Produto' }}
-                        <tui-icon icon="@tui.chevron-down" />
-                      </button>
-                    </div>
-                    <ng-template #productDropdown>
-                      <tui-data-list>
-                        @for (product of products(); track product.id) {
-                          <button
-                            tuiOption
-                            (click)="onProductSelect(i, product); productDropdownOpen[i] = false"
-                          >
-                            {{ product.name }} - {{ product.price | currency:'BRL':'symbol':'1.2-2' }}
-                          </button>
-                        }
-                      </tui-data-list>
-                    </ng-template>
+                      <option value="">Selecionar Produto</option>
+                      @for (product of products(); track product.id) {
+                        <option [value]="product.id">
+                          {{ product.name }} - {{ product.price | currency:'BRL':'symbol':'1.2-2' }}
+                        </option>
+                      }
+                    </select>
                   </div>
 
                   <div class="item-quantity">
@@ -223,33 +208,18 @@ interface OrderItemForm {
           <!-- Customer -->
           <div tuiCardLarge tuiAppearance="floating" class="form-card">
             <h3>Cliente</h3>
-            <div
-              tuiDropdownOpen
-              [tuiDropdown]="customerDropdown"
-              [(tuiDropdownOpen)]="customerDropdownOpen"
+            <select 
+              class="customer-select"
+              [ngModel]="selectedCustomer()?.id || ''"
+              (ngModelChange)="onCustomerSelectById($event)"
             >
-              <button
-                tuiButton
-                appearance="outline"
-                type="button"
-                class="customer-select-btn"
-              >
-                {{ selectedCustomer()?.name || 'Selecionar Cliente' }}
-                <tui-icon icon="@tui.chevron-down" />
-              </button>
-            </div>
-            <ng-template #customerDropdown>
-              <tui-data-list>
-                @for (customer of customers(); track customer.id) {
-                  <button
-                    tuiOption
-                    (click)="selectCustomer(customer); customerDropdownOpen = false"
-                  >
-                    {{ customer.name }} - {{ customer.phone }}
-                  </button>
-                }
-              </tui-data-list>
-            </ng-template>
+              <option value="">Selecionar Cliente (opcional)</option>
+              @for (customer of customers(); track customer.id) {
+                <option [value]="customer.id">
+                  {{ customer.name }} - {{ customer.phone }}
+                </option>
+              }
+            </select>
 
             @if (selectedCustomer()) {
               <div class="selected-customer">
@@ -513,10 +483,30 @@ interface OrderItemForm {
       color: var(--tui-status-negative);
     }
 
-    .product-select-btn,
-    .customer-select-btn {
+    .product-select,
+    .customer-select {
       width: 100%;
-      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--tui-border-normal);
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      background: var(--tui-background-base);
+      color: var(--tui-text-primary);
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+
+      &:focus {
+        border-color: var(--tui-border-focus);
+      }
+
+      &:hover {
+        border-color: var(--tui-border-hover);
+      }
+    }
+
+    .product-select {
+      min-width: 200px;
     }
 
     .empty-items {
@@ -900,6 +890,22 @@ export class OrderFormComponent implements OnInit {
         };
         return updated;
       });
+    }
+  }
+
+  onProductSelectById(index: number, productId: string): void {
+    const product = this.products().find(p => p.id === productId) || null;
+    this.onProductSelect(index, product);
+  }
+
+  onCustomerSelectById(customerId: string): void {
+    if (!customerId) {
+      this.clearCustomer();
+      return;
+    }
+    const customer = this.customers().find(c => c.id === customerId);
+    if (customer) {
+      this.selectCustomer(customer);
     }
   }
 

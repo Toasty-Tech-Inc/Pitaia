@@ -82,14 +82,16 @@ import { Category } from '../../../../core/models/product.model';
 
               <div class="form-group">
                 <label tuiLabel for="categoryId">Categoria</label>
-                <tui-textfield>
-                  <select tuiTextfield formControlName="categoryId" id="categoryId">
-                    <option value="">Selecione uma categoria</option>
-                    @for (category of categories(); track category.id) {
-                      <option [value]="category.id">{{ category.name }}</option>
-                    }
-                  </select>
-                </tui-textfield>
+                <select 
+                  class="category-select" 
+                  formControlName="categoryId" 
+                  id="categoryId"
+                >
+                  <option [ngValue]="null">Selecione uma categoria</option>
+                  @for (category of categories(); track category.id) {
+                    <option [ngValue]="category.id">{{ category.name }}</option>
+                  }
+                </select>
               </div>
 
               <div class="form-group">
@@ -299,6 +301,27 @@ import { Category } from '../../../../core/models/product.model';
 
     .form-group.full-width {
       grid-column: 1 / -1;
+    }
+
+    .category-select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--tui-border-normal);
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      background: var(--tui-background-base);
+      color: var(--tui-text-primary);
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+
+      &:focus {
+        border-color: var(--tui-border-focus);
+      }
+
+      &:hover {
+        border-color: var(--tui-border-hover);
+      }
     }
 
     .form-group h3 {

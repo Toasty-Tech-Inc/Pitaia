@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TuiButton, TuiError, TuiTextfield } from '@taiga-ui/core';
-import { TuiCheckbox, TuiFieldErrorPipe } from '@taiga-ui/kit';
+import { TuiFieldErrorPipe } from '@taiga-ui/kit';
 import { TuiDialogContext } from '@taiga-ui/core';
 import { CategoriesService } from '../../../../core/services/products.service';
 import { NotificationService } from '../../../../core/services/notification.service';
