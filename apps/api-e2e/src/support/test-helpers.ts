@@ -54,28 +54,40 @@ export const setupTestUser = async () => {
   const phone = generateUniquePhone();
 
   // Registrar usuário
-  const registerRes = await axios.post('/auth/register', {
-    email,
-    password,
-    name,
-    phone,
-  });
+  try {
+    const registerRes = await axios.post('/auth/register', {
+      email,
+      password,
+      name,
+      phone,
+    });
 
-  if (registerRes.status === 201 || registerRes.status === 200) {
-    authToken = registerRes.data.access_token || registerRes.data.accessToken;
-    refreshToken = registerRes.data.refresh_token || registerRes.data.refreshToken;
-    testUserId = registerRes.data.user?.id;
-    if (testUserId) testData.users.push(testUserId);
-    return registerRes.data;
+    if (registerRes.status === 201 || registerRes.status === 200) {
+      authToken = registerRes.data.access_token || registerRes.data.accessToken;
+      refreshToken = registerRes.data.refresh_token || registerRes.data.refreshToken;
+      testUserId = registerRes.data.user?.id;
+      if (testUserId) testData.users.push(testUserId);
+      return registerRes.data;
+    }
+
+    // Se registro não retornou 2xx, logar o erro
+    console.error('Register failed:', registerRes.status, registerRes.data);
+  } catch (err) {
+    console.error('Register error:', err);
   }
 
   // Se registro falhou, tentar login
-  const loginRes = await axios.post('/auth/login', { email, password });
-  if (loginRes.status === 200) {
-    authToken = loginRes.data.access_token || loginRes.data.accessToken;
-    refreshToken = loginRes.data.refresh_token || loginRes.data.refreshToken;
-    testUserId = loginRes.data.user?.id;
-    return loginRes.data;
+  try {
+    const loginRes = await axios.post('/auth/login', { email, password });
+    if (loginRes.status === 200) {
+      authToken = loginRes.data.access_token || loginRes.data.accessToken;
+      refreshToken = loginRes.data.refresh_token || loginRes.data.refreshToken;
+      testUserId = loginRes.data.user?.id;
+      return loginRes.data;
+    }
+    console.error('Login failed:', loginRes.status, loginRes.data);
+  } catch (err) {
+    console.error('Login error:', err);
   }
 
   throw new Error('Failed to setup test user');
