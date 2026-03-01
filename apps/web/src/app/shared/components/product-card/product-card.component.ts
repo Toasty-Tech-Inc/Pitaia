@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { TuiBadge } from '@taiga-ui/kit';
@@ -15,9 +15,9 @@ import { Product } from '../../../core/models/product.model';
       [attr.aria-label]="'Produto: ' + product().name"
     >
       <div class="product-image-container">
-        @if (product().primaryImage) {
+        @if (productImage()) {
           <img 
-            [src]="product().primaryImage" 
+            [src]="productImage()" 
             [alt]="product().name"
             class="product-image"
             loading="lazy"
@@ -177,6 +177,12 @@ import { Product } from '../../../core/models/product.model';
 export class ProductCardComponent {
   product = input.required<Product>();
   addToCart = output<Product>();
+
+  // Usa primaryImage se existir, senão usa a primeira imagem do array images
+  protected productImage = computed(() => {
+    const p = this.product();
+    return p.primaryImage || (p.images && p.images.length > 0 ? p.images[0] : null);
+  });
 
   protected onAddClick(): void {
     this.addToCart.emit(this.product());
