@@ -147,7 +147,10 @@ export class ProductsListComponent implements OnInit {
     {
       key: 'price',
       header: 'Preço',
-      render: (item) => `R$ ${item.price.toFixed(2)}`,
+      render: (item) => {
+        const price = Number(item.price) || 0;
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price);
+      },
     },
     {
       key: 'currentStock',
