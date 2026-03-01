@@ -1,6 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 
+// Helper to extract data from wrapped API response
+// API wraps responses in { data: ..., statusCode: ..., timestamp: ... }
+export const unwrapResponse = (responseData: any): any => {
+  if (responseData && typeof responseData === 'object' && 'data' in responseData && 'statusCode' in responseData) {
+    return responseData.data;
+  }
+  return responseData;
+};
+
+// Helper to wait and retry on rate limiting
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+const retryOnRateLimit = async <T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): Promise<T> => {
+  for (let i = 0; i < retries; i++) {
+    const result = await fn() as any;
+    if (result?.status === 429) {
+      console.log(`Rate limited, waiting ${delayMs}ms before retry ${i + 1}/${retries}...`);
+      await delay(delayMs);
+      continue;
+    }
+    return result;
+  }
+  return fn();
+};
+
 // Armazena dados de teste criados para limpeza posterior
 export const testData = {
   users: [] as string[],
@@ -53,21 +78,25 @@ export const setupTestUser = async () => {
   const name = 'Test User E2E';
   const phone = generateUniquePhone();
 
-  // Registrar usuário
+  // Registrar usuário com retry para rate limiting
   try {
-    const registerRes = await axios.post('/auth/register', {
-      email,
-      password,
-      name,
-      phone,
-    });
+    const registerRes = await retryOnRateLimit(() => 
+      axios.post('/auth/register', {
+        email,
+        password,
+        name,
+        phone,
+      })
+    );
 
     if (registerRes.status === 201 || registerRes.status === 200) {
-      authToken = registerRes.data.access_token || registerRes.data.accessToken;
-      refreshToken = registerRes.data.refresh_token || registerRes.data.refreshToken;
-      testUserId = registerRes.data.user?.id;
+      // Response is already unwrapped by axios interceptor in test-setup.ts
+      const data = registerRes.data;
+      authToken = data.access_token || data.accessToken;
+      refreshToken = data.refresh_token || data.refreshToken;
+      testUserId = data.user?.id;
       if (testUserId) testData.users.push(testUserId);
-      return registerRes.data;
+      return data;
     }
 
     // Se registro não retornou 2xx, logar o erro
@@ -76,14 +105,18 @@ export const setupTestUser = async () => {
     console.error('Register error:', err);
   }
 
-  // Se registro falhou, tentar login
+  // Se registro falhou, tentar login com retry
   try {
-    const loginRes = await axios.post('/auth/login', { email, password });
+    const loginRes = await retryOnRateLimit(() => 
+      axios.post('/auth/login', { email, password })
+    );
     if (loginRes.status === 200) {
-      authToken = loginRes.data.access_token || loginRes.data.accessToken;
-      refreshToken = loginRes.data.refresh_token || loginRes.data.refreshToken;
-      testUserId = loginRes.data.user?.id;
-      return loginRes.data;
+      // Response is already unwrapped by axios interceptor in test-setup.ts
+      const data = loginRes.data;
+      authToken = data.access_token || data.accessToken;
+      refreshToken = data.refresh_token || data.refreshToken;
+      testUserId = data.user?.id;
+      return data;
     }
     console.error('Login failed:', loginRes.status, loginRes.data);
   } catch (err) {
@@ -95,24 +128,28 @@ export const setupTestUser = async () => {
 
 // Setup: criar estabelecimento de teste
 export const setupTestEstablishment = async () => {
-  const res = await authenticatedRequest().post('/establishments', {
-    name: `Test Establishment ${Date.now()}`,
-    tradeName: 'Test',
-    cnpj: generateUniqueCnpj(),
-    email: generateUniqueEmail(),
-    phone: generateUniquePhone(),
-    street: 'Rua Teste',
-    number: '123',
-    neighborhood: 'Centro',
-    city: 'São Paulo',
-    state: 'SP',
-    zipCode: '01000000',
-  });
+  const res = await retryOnRateLimit(() => 
+    authenticatedRequest().post('/establishments', {
+      name: `Test Establishment ${Date.now()}`,
+      tradeName: 'Test',
+      cnpj: generateUniqueCnpj(),
+      email: generateUniqueEmail(),
+      phone: generateUniquePhone(),
+      street: 'Rua Teste',
+      number: '123',
+      neighborhood: 'Centro',
+      city: 'São Paulo',
+      state: 'SP',
+      zipCode: '01000000',
+    })
+  );
 
   if (res.status === 201 || res.status === 200) {
-    testEstablishmentId = res.data.id;
-    testData.establishments.push(res.data.id);
-    return res.data;
+    // Response is already unwrapped by axios interceptor in test-setup.ts
+    const data = res.data;
+    testEstablishmentId = data.id;
+    testData.establishments.push(data.id);
+    return data;
   }
 
   throw new Error(`Failed to create test establishment: ${res.status} ${JSON.stringify(res.data)}`);

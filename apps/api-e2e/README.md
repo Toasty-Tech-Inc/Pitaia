@@ -37,13 +37,18 @@ src/
 
 1. A API deve estar rodando em `http://localhost:3000` (ou conforme variáveis de ambiente)
 2. O banco de dados deve estar configurado e acessível
+3. **Importante**: A API deve ser iniciada com `E2E_TEST=true` para desabilitar o rate limiting
 
 ## Executando os Testes
 
 ### Executar todos os testes E2E
 
 ```bash
-npx nx run api-e2e:e2e
+# 1. Inicie a API com rate limiting desabilitado
+E2E_TEST=true pnpm exec nx run api:serve
+
+# 2. Em outro terminal, execute os testes
+pnpm exec nx run api-e2e:e2e
 ```
 
 ### Executar com a API em modo watch

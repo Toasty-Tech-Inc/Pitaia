@@ -58,6 +58,9 @@
         },
         "production": {
           "buildTarget": "api:build:production"
+        },
+        "e2e": {
+          "buildTarget": "api:build:development"
         }
       }
     },

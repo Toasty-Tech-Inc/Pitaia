@@ -1,6 +1,6 @@
 import { ModifiersModule } from './../modules/modifiers/modifiers.module';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { DatabaseModule } from '../database/database.module';
@@ -34,12 +34,18 @@ import { CashMovementsModule } from '../modules/cash-movements/cash-movements.mo
       isGlobal: true,
       envFilePath: '.env',
     }),
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000,
-        limit: 10,
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const isE2E = configService.get('NODE_ENV') === 'test' || configService.get('E2E_TEST') === 'true';
+        return [{
+          ttl: 60000,
+          // Disable rate limiting for E2E tests (very high limit)
+          limit: isE2E ? 10000 : 10,
+        }];
       },
-    ]),
+    }),
     HealthModule,
     DatabaseModule,
     AuthModule,

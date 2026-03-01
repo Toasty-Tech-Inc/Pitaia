@@ -17,4 +17,6 @@ export default {
   coverageDirectory: '../../coverage/api-e2e',
   testMatch: ['**/*.e2e-spec.ts', '**/*.spec.ts'],
   testTimeout: 30000,
+  // Run tests sequentially to avoid rate limiting issues with the API
+  maxWorkers: 1,
 };
