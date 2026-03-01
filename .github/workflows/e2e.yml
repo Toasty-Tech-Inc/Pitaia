@@ -142,7 +142,7 @@ jobs:
         run: |
           pnpm exec nx run api:serve &
           echo "Waiting for API to be ready..."
-          npx wait-on http://localhost:3000/health --timeout 60000
+          npx wait-on http://localhost:3000/api/health --timeout 60000
         env:
           DATABASE_URL: postgresql://pitaia:pitaia_test_password@localhost:5432/pitaia_test
           JWT_SECRET: e2e_test_jwt_secret_key_12345
