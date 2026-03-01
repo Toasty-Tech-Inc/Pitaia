@@ -10,13 +10,14 @@ on:
       - main
 
 jobs:
-  e2e:
+  # Job para testes E2E de frontend (Cypress)
+  frontend-e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
     strategy:
       matrix:
-        project: [web-e2e, menu-e2e, dashboard-e2e, api-e2e, mobile-e2e]
+        project: [web-e2e, menu-e2e, dashboard-e2e, mobile-e2e]
       fail-fast: true
       
     steps:
@@ -36,7 +37,6 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
-      # Novo: Cache do binário Cypress
       - name: Cache Cypress Binary
         uses: actions/cache@v4
         with:
@@ -48,7 +48,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Novo: Verificar e instalar binário Cypress se necessário
       - name: Verify Cypress Binary
         run: |
           if ! pnpm exec cypress verify; then
@@ -82,4 +81,86 @@ jobs:
           path: |
             apps/**/cypress/videos/**/*
             dist/cypress/**/videos/**/*
+          retention-days: 7
+
+  # Job para testes E2E da API (Jest + PostgreSQL)
+  api-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: pitaia
+          POSTGRES_PASSWORD: pitaia_test_password
+          POSTGRES_DB: pitaia_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        env:
+          DATABASE_URL: postgresql://pitaia:pitaia_test_password@localhost:5432/pitaia_test
+
+      - name: Generate Prisma Client
+        run: pnpm exec prisma generate --schema apps/api/prisma/schema.prisma
+        env:
+          DATABASE_URL: postgresql://pitaia:pitaia_test_password@localhost:5432/pitaia_test
+
+      - name: Run Prisma Migrations
+        run: pnpm exec prisma migrate deploy --schema apps/api/prisma/schema.prisma
+        env:
+          DATABASE_URL: postgresql://pitaia:pitaia_test_password@localhost:5432/pitaia_test
+
+      - name: Set SHAs for Nx
+        uses: nrwl/nx-set-shas@v4
+
+      - name: Start API server
+        run: |
+          pnpm exec nx run api:serve &
+          echo "Waiting for API to be ready..."
+          npx wait-on http://localhost:3000/health --timeout 60000
+        env:
+          DATABASE_URL: postgresql://pitaia:pitaia_test_password@localhost:5432/pitaia_test
+          JWT_SECRET: e2e_test_jwt_secret_key_12345
+          JWT_EXPIRES_IN: 1d
+          PORT: 3000
+
+      - name: Run API E2E tests
+        run: pnpm exec nx e2e api-e2e --verbose
+        env:
+          DATABASE_URL: postgresql://pitaia:pitaia_test_password@localhost:5432/pitaia_test
+          HOST: localhost
+          PORT: 3000
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-e2e-results
+          path: |
+            coverage/api-e2e/**/*
           retention-days: 7
