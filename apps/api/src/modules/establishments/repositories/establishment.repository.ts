@@ -19,6 +19,27 @@ export class EstablishmentRepository
     });
   }
 
+  async findBySlug(slug: string): Promise<Establishment | null> {
+    return this.prisma.establishment.findUnique({
+      where: { slug },
+      include: {
+        categories: {
+          where: { isActive: true },
+          orderBy: { sortOrder: 'asc' },
+        },
+        products: {
+          where: { isActive: true, isAvailable: true },
+          include: {
+            category: true,
+          },
+        },
+        paymentMethods: {
+          where: { isActive: true },
+        },
+      },
+    });
+  }
+
   async findByUserId(userId: string): Promise<Establishment[]> {
     return this.prisma.establishment.findMany({
       where: {

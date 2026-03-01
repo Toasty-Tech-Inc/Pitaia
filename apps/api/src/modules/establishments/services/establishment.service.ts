@@ -24,6 +24,14 @@ export class EstablishmentService implements IEstablishmentService {
     createEstablishmentDto: CreateEstablishmentDto,
     userId: string,
   ): Promise<Establishment> {
+    // Verificar se slug já existe
+    const existingSlug = await this.establishmentRepository.findBySlug(
+      createEstablishmentDto.slug,
+    );
+    if (existingSlug) {
+      throw new ConflictException('Slug já está em uso');
+    }
+
     // Verificar se CNPJ já existe
     if (createEstablishmentDto.cnpj) {
       const existingCnpj = await this.establishmentRepository.findByCnpj(
@@ -98,6 +106,14 @@ export class EstablishmentService implements IEstablishmentService {
     return establishment;
   }
 
+  async findBySlug(slug: string): Promise<Establishment> {
+    const establishment = await this.establishmentRepository.findBySlug(slug);
+    if (!establishment) {
+      throw new NotFoundException('Estabelecimento não encontrado');
+    }
+    return establishment;
+  }
+
   async findByUser(userId: string): Promise<Establishment[]> {
     return this.establishmentRepository.findByUserId(userId);
   }
@@ -107,6 +123,17 @@ export class EstablishmentService implements IEstablishmentService {
     updateEstablishmentDto: UpdateEstablishmentDto,
   ): Promise<Establishment> {
     const establishment = await this.findOne(id);
+    const currentSlug = (establishment as Establishment & { slug: string }).slug;
+
+    // Verificar slug se alterado
+    if (updateEstablishmentDto.slug && updateEstablishmentDto.slug !== currentSlug) {
+      const existingSlug = await this.establishmentRepository.findBySlug(
+        updateEstablishmentDto.slug,
+      );
+      if (existingSlug) {
+        throw new ConflictException('Slug já está em uso');
+      }
+    }
 
     // Verificar CNPJ se alterado
     if (

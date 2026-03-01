@@ -8,6 +8,16 @@ export class CreateEstablishmentDto {
   @IsString()
   name: string;
 
+  @ApiProperty({ 
+    example: 'restaurante-pitaia',
+    description: 'URL-friendly unique identifier (lowercase, hyphens, no spaces)'
+  })
+  @IsString()
+  @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, { 
+    message: 'Slug deve conter apenas letras minúsculas, números e hífens' 
+  })
+  slug: string;
+
   @ApiPropertyOptional({ example: 'Pitaia' })
   @IsOptional()
   @IsString()

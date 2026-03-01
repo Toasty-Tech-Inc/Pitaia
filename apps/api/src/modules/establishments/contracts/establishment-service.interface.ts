@@ -8,6 +8,7 @@ export interface IEstablishmentService {
   create(createEstablishmentDto: CreateEstablishmentDto, userId: string): Promise<Establishment>;
   findAll(filters: FilterEstablishmentDto): Promise<IPaginatedResult<Establishment>>;
   findOne(id: string): Promise<Establishment>;
+  findBySlug(slug: string): Promise<Establishment>;
   update(id: string, updateEstablishmentDto: UpdateEstablishmentDto): Promise<Establishment>;
   remove(id: string): Promise<void>;
   addUser(establishmentId: string, userId: string, role: string): Promise<void>;

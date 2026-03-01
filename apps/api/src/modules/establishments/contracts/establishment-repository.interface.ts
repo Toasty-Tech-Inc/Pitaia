@@ -3,6 +3,7 @@ import { IBaseRepository } from '../../../common/contracts/base-repository.inter
 
 export interface IEstablishmentRepository extends IBaseRepository<Establishment> {
   findByCnpj(cnpj: string): Promise<Establishment | null>;
+  findBySlug(slug: string): Promise<Establishment | null>;
   findByUserId(userId: string): Promise<Establishment[]>;
   findWithUsers(id: string): Promise<Establishment | null>;
   activateEstablishment(id: string): Promise<Establishment>;
