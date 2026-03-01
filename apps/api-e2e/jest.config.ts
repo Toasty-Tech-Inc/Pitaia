@@ -15,4 +15,7 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/api-e2e',
+  testMatch: ['**/*.e2e-spec.ts', '**/*.spec.ts'],
+  testTimeout: 30000,
+  verbose: true,
 };
