@@ -1,1 +1,61 @@
 /* You can add global styles to this file, and also import other style files */
+
+// Reset básico
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// Estilos globais para o body e html
+html {
+  height: 100%;
+  overflow-y: scroll; // Sempre mostra a scrollbar para evitar layout shift
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--tui-font-text);
+  background-color: var(--tui-background-base);
+  color: var(--tui-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Configuração do TuiRoot para usar scroll nativo do body
+tui-root {
+  display: block;
+  min-height: 100vh;
+}
+
+// Estilos de foco visíveis para acessibilidade
+:focus-visible {
+  outline: 2px solid var(--tui-border-focus);
+  outline-offset: 2px;
+}
+
+// Remove outline padrão quando não está usando teclado
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// Scrollbar personalizada (opcional)
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--tui-background-neutral-1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--tui-background-neutral-2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--tui-text-tertiary);
+}
