@@ -1,7 +1,107 @@
 .pitaia-header {
   .pitaia-primary-btn {
-    background: var(--tui-primary);
-    color: var(--tui-primary-text);
+    background: linear-gradient(135deg, #FE3867 0%, #FF6B8A 100%);
+    color: white;
+  }
+
+  // Logo
+  .logo {
+    .logo-text {
+      white-space: nowrap;
+    }
+  }
+
+  // Mobile menu button - visible only on mobile
+  .mobile-menu-btn {
+    display: none;
+  }
+
+  // Desktop drawer button - hidden on mobile
+  .desktop-drawer-btn {
+    display: flex;
+  }
+
+  // Navigation segments
+  .nav-segments {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  // New order button
+  .new-order-btn {
+    .btn-text {
+      display: inline;
+    }
+  }
+
+  // Hide certain elements on different screen sizes
+  .hide-mobile {
+    display: flex;
+  }
+
+  .hide-tablet {
+    display: flex;
+  }
+}
+
+// Tablet breakpoint
+@media (max-width: 1024px) {
+  .pitaia-header {
+    .hide-tablet {
+      display: none !important;
+    }
+
+    .logo-text {
+      display: none;
+    }
+  }
+}
+
+// Mobile breakpoint
+@media (max-width: 768px) {
+  .pitaia-header {
+    gap: 0.5rem;
+    padding: 0 0.5rem;
+
+    .mobile-menu-btn {
+      display: flex;
+    }
+
+    .desktop-drawer-btn {
+      display: none;
+    }
+
+    .hide-mobile {
+      display: none !important;
+    }
+
+    .nav-segments {
+      display: none;
+    }
+
+    .new-order-btn {
+      padding: 0 0.75rem;
+      min-width: auto;
+
+      .btn-text {
+        display: none;
+      }
+    }
+
+    hr {
+      display: none;
+    }
+  }
+}
+
+// Small mobile breakpoint
+@media (max-width: 480px) {
+  .pitaia-header {
+    .logo {
+      tui-icon {
+        display: none;
+      }
+    }
   }
 }
 

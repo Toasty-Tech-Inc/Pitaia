@@ -58,7 +58,7 @@ export interface TableAction<T = any> {
           @for (item of data(); track trackByFn()(item)) {
             <tr>
               @for (column of columns(); track column.key) {
-                <td>
+                <td [attr.data-label]="column.header">
                   @if (column.render) {
                     {{ column.render(item) }}
                   } @else {
@@ -76,6 +76,7 @@ export interface TableAction<T = any> {
                       [iconStart]="action.icon"
                       (click)="onAction.emit({ action: action.action, item })"
                       [title]="action.label"
+                      [attr.aria-label]="action.label"
                     >
                     </button>
                   }
@@ -138,6 +139,7 @@ export interface TableAction<T = any> {
       font-size: 0.875rem;
       color: var(--tui-text-secondary);
       border-bottom: 1px solid var(--tui-border-normal);
+      white-space: nowrap;
     }
 
     .data-table td {
@@ -159,6 +161,7 @@ export interface TableAction<T = any> {
       display: flex;
       gap: 0.25rem;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     .empty-state {
@@ -173,6 +176,8 @@ export interface TableAction<T = any> {
       justify-content: space-between;
       padding: 1rem;
       border-top: 1px solid var(--tui-border-normal);
+      flex-wrap: wrap;
+      gap: 0.75rem;
     }
 
     .pagination-info {
@@ -185,6 +190,95 @@ export interface TableAction<T = any> {
       height: 1rem;
       opacity: 0.5;
       margin-left: 0.25rem;
+    }
+
+    // Tablet - horizontal scroll
+    @media (max-width: 1024px) {
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .data-table {
+        min-width: 600px;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: 0.75rem;
+      }
+    }
+
+    // Mobile - card layout
+    @media (max-width: 768px) {
+      .table-container {
+        border-radius: 0.5rem;
+      }
+
+      .data-table {
+        min-width: 100%;
+      }
+
+      .data-table thead {
+        display: none;
+      }
+
+      .data-table tbody tr {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        border-bottom: 1px solid var(--tui-border-normal);
+        gap: 0.5rem;
+      }
+
+      .data-table tbody tr:hover {
+        background: transparent;
+      }
+
+      .data-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.25rem 0;
+        border-bottom: none;
+        gap: 0.5rem;
+      }
+
+      .data-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--tui-text-secondary);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        flex-shrink: 0;
+      }
+
+      .actions-cell {
+        justify-content: flex-end;
+        padding-top: 0.5rem !important;
+        border-top: 1px solid var(--tui-border-normal);
+        margin-top: 0.5rem;
+      }
+
+      .actions-cell::before {
+        display: none;
+      }
+
+      .pagination-container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    // Small mobile
+    @media (max-width: 480px) {
+      .data-table tbody tr {
+        padding: 0.75rem;
+      }
+
+      .pagination-info {
+        font-size: 0.75rem;
+      }
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,

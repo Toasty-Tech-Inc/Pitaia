@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, output } from '@angular/core';
 import { CommonModule, KeyValuePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import {
@@ -8,7 +8,6 @@ import {
   TuiDropdown,
   TuiDropdownService,
   TuiIcon,
-  TuiLink,
   TuiTextfield,
 } from '@taiga-ui/core';
 import {
@@ -34,7 +33,6 @@ import { UserService } from '../../../services/user.service';
     TuiDataList,
     TuiDropdown,
     TuiIcon,
-    TuiLink,
     TuiNavigation,
     TuiTextfield,
   ],
@@ -49,6 +47,8 @@ export class HeaderComponent extends TuiPortals {
   protected dropdownOpen = false;
   protected notifications = signal(3);
   protected user = this.userService.getUserInfo();
+  
+  menuToggle = output<void>();
 
   protected readonly drawer = {
     'Operações': [
@@ -69,6 +69,10 @@ export class HeaderComponent extends TuiPortals {
       { name: 'Formas de Pagamento', icon: '@tui.credit-card', route: '/payments' },
     ],
   };
+
+  onMenuToggle(): void {
+    this.menuToggle.emit();
+  }
 
   logout(): void {
     this.userService.logout();

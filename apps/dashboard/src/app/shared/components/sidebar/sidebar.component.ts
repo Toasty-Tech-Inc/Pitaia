@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import {
@@ -34,6 +34,10 @@ interface MenuItem {
 export class SidebarComponent {
   expanded = input.required<boolean>();
   activeOrders = input<number>(0);
+  isOpen = input<boolean>(false);
+  isMobile = input<boolean>(false);
+  
+  closeSidebar = output<void>();
 
   protected readonly menuItems: MenuItem[] = [
     {
@@ -109,5 +113,11 @@ export class SidebarComponent {
       route: '/cashier',
     },
   ];
+
+  onItemClick(): void {
+    if (this.isMobile()) {
+      this.closeSidebar.emit();
+    }
+  }
 }
 

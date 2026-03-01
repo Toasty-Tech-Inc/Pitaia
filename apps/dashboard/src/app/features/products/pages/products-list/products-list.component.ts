@@ -82,7 +82,7 @@ import { Product } from '../../../../core/models/product.model';
   styles: [`
     .products-stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
@@ -98,11 +98,13 @@ import { Product } from '../../../../core/models/product.model';
       width: 2.5rem;
       height: 2.5rem;
       color: #FE3867;
+      flex-shrink: 0;
     }
 
     .stat-content {
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
 
     .stat-value {
@@ -114,6 +116,75 @@ import { Product } from '../../../../core/models/product.model';
     .stat-label {
       font-size: 0.875rem;
       color: var(--tui-text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    // Tablet
+    @media (max-width: 1024px) {
+      .products-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+      }
+
+      .stat-card {
+        padding: 1rem;
+        gap: 0.75rem;
+      }
+
+      .stat-card tui-icon {
+        width: 2rem;
+        height: 2rem;
+      }
+
+      .stat-value {
+        font-size: 1.25rem;
+      }
+
+      .stat-label {
+        font-size: 0.75rem;
+      }
+    }
+
+    // Mobile
+    @media (max-width: 768px) {
+      .products-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .stat-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 0.75rem;
+        gap: 0.5rem;
+      }
+
+      .stat-card tui-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+
+      .stat-value {
+        font-size: 1.125rem;
+      }
+
+      .stat-label {
+        font-size: 0.625rem;
+      }
+    }
+
+    // Small mobile
+    @media (max-width: 480px) {
+      .stat-card {
+        padding: 0.5rem;
+      }
+
+      .stat-value {
+        font-size: 1rem;
+      }
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,

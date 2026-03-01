@@ -3,7 +3,21 @@
 </div>
 
 <header tuiNavigationHeader class="pitaia-header">
+    <!-- Mobile menu toggle button -->
     <button
+        class="mobile-menu-btn"
+        tuiIconButton
+        type="button"
+        title="Menu"
+        aria-label="Abrir menu de navegação"
+        (click)="onMenuToggle()"
+    >
+        <tui-icon icon="@tui.menu" />
+    </button>
+
+    <!-- Desktop drawer button -->
+    <button
+        class="desktop-drawer-btn"
         title="Menu"
         tuiIconButton
         tuiNavigationDrawer
@@ -28,12 +42,12 @@
         </tui-data-list>
     </button>
 
-    <span tuiNavigationLogo>
+    <span tuiNavigationLogo class="logo">
         <tui-icon icon="@tui.home" />
-        <span tuiFade>Pitaia - Sistema de Gestão</span>
+        <span tuiFade class="logo-text">Pitaia</span>
     </span>
 
-    <span tuiNavigationSegments>
+    <span tuiNavigationSegments class="nav-segments">
         <button
             appearance="secondary-grayscale"
             tuiButton
@@ -55,6 +69,7 @@
             tuiButton
             type="button"
             routerLink="/reports"
+            class="hide-tablet"
         >
             Relatórios
         </button>
@@ -63,21 +78,22 @@
     <hr />
 
     <button
-        class="pitaia-primary-btn"
+        class="pitaia-primary-btn new-order-btn"
         iconStart="@tui.plus"
         tuiButton
         type="button"
         routerLink="/orders/new"
     >
-        Novo Pedido
+        <span class="btn-text">Novo Pedido</span>
     </button>
 
     <button
         iconStart="@tui.bell"
         tuiIconButton
         type="button"
+        title="Notificações"
+        aria-label="Notificações"
     >
-        Notificações
         <tui-badge-notification *ngIf="notifications() > 0" />
     </button>
 
@@ -86,8 +102,9 @@
         tuiIconButton
         type="button"
         title="Imprimir Pedidos"
+        aria-label="Impressão"
+        class="hide-mobile"
     >
-        Impressão
     </button>
 
     <div
@@ -98,12 +115,22 @@
         <button
             tuiIconButton
             type="button"
+            aria-label="Menu do usuário"
             (click)="dropdownOpen = !dropdownOpen"
         >
             <tui-avatar [src]="null" [round]="true" />
         </button>
         <ng-template #userMenu>
             <tui-data-list>
+                <a tuiOption routerLink="/profile">
+                    <tui-icon icon="@tui.user" />
+                    Meu Perfil
+                </a>
+                <a tuiOption routerLink="/settings">
+                    <tui-icon icon="@tui.settings" />
+                    Configurações
+                </a>
+                <hr />
                 <button tuiOption type="button" (click)="logout()">
                     <tui-icon icon="@tui.log-out" />
                     Sair

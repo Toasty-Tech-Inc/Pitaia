@@ -1,1 +1,136 @@
 /* You can add global styles to this file, and also import other style files */
+
+// Reset básico
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// Variáveis CSS para breakpoints
+:root {
+  --breakpoint-mobile: 480px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-wide: 1280px;
+  
+  // Sidebar width
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 64px;
+}
+
+// Estilos globais para o body e html
+html {
+  height: 100%;
+  overflow-y: scroll;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--tui-font-text);
+  background-color: var(--tui-background-base);
+  color: var(--tui-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// TuiRoot
+tui-root {
+  display: block;
+  min-height: 100vh;
+}
+
+// Estilos de foco visíveis para acessibilidade
+:focus-visible {
+  outline: 2px solid var(--tui-border-focus);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// Scrollbar personalizada
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--tui-background-neutral-1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--tui-background-neutral-2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--tui-text-tertiary);
+}
+
+// Utilitários responsivos
+.hide-mobile {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+.hide-tablet {
+  @media (max-width: 1024px) {
+    display: none !important;
+  }
+}
+
+.show-mobile-only {
+  display: none !important;
+  
+  @media (max-width: 768px) {
+    display: flex !important;
+  }
+}
+
+.show-tablet-only {
+  display: none !important;
+  
+  @media (max-width: 1024px) {
+    display: flex !important;
+  }
+}
+
+// Grid responsivo
+.responsive-grid {
+  display: grid;
+  gap: 1rem;
+  
+  @media (min-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// Container responsivo
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  
+  @media (min-width: 768px) {
+    padding: 0 1.5rem;
+  }
+}
+
+// Tamanho de texto responsivo
+.text-responsive {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+}
