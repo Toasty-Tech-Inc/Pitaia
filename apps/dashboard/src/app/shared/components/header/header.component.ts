@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, inject, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, output } from '@angular/core';
 import { CommonModule, KeyValuePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import {
@@ -9,6 +9,7 @@ import {
   TuiDropdownService,
   TuiIcon,
   TuiTextfield,
+  TUI_DARK_MODE,
 } from '@taiga-ui/core';
 import {
   TuiAvatar,
@@ -43,6 +44,7 @@ import { UserService } from '../../../services/user.service';
 })
 export class HeaderComponent extends TuiPortals {
   private userService = inject(UserService);
+  protected readonly darkMode = inject(TUI_DARK_MODE);
   protected open = false;
   protected dropdownOpen = false;
   protected notifications = signal(3);

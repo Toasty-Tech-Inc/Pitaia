@@ -107,6 +107,17 @@
     >
     </button>
 
+    <button
+        [iconStart]="darkMode() ? '@tui.sun' : '@tui.moon'"
+        tuiIconButton
+        type="button"
+        [title]="darkMode() ? 'Mudar para tema claro' : 'Mudar para tema escuro'"
+        [attr.aria-label]="darkMode() ? 'Mudar para tema claro' : 'Mudar para tema escuro'"
+        [attr.aria-pressed]="darkMode()"
+        (click)="darkMode.set(!darkMode())"
+    >
+    </button>
+
     <div
         [tuiDropdown]="userMenu"
         [tuiDropdownManual]="dropdownOpen"
