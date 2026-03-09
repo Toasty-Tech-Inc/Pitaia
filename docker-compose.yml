@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Databases
   postgres:
@@ -89,24 +87,24 @@ services:
       - api
     networks:
       - pitaia_network
-      
+
   # API (NestJS) - opcional, criar depois
-  # api:
-  #   build:
-  #     context: .
-  #     dockerfile: apps/api/Dockerfile
-  #   environment:
-  #     DATABASE_URL: postgresql://admin:admin123@postgres:5432/pitaia
-  #     REDIS_URL: redis://redis:6379
-  #     RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672
-  #   ports:
-  #     - '3000:3000'
-  #   depends_on:
-  #     - postgres
-  #     - redis
-  #     - rabbitmq
-  #   networks:
-  #     - pitaia_network
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://admin:admin123@postgres:5432/pitaia
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    networks:
+      - pitaia_network
 
 volumes:
   postgres_data:

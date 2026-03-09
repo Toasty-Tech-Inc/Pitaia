@@ -1,0 +1,37 @@
+# Dependencies
+node_modules
+.pnpm-store
+node-compile-cache
+
+# Build output
+dist
+tmp
+out-tsc
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Test e2e
+**/e2e
+**/*.spec.ts
+**/*.test.ts
+
+# Docs e misc
+*.md
+.DS_Store
+
+# Nx cache
+.nx
+.nx/cache
+
+# Outras pastas desnecessárias
+infra
+coverage
+.angular
