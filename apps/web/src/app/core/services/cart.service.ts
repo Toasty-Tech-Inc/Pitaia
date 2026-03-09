@@ -109,7 +109,7 @@ export class CartService {
 
   addItem(product: Product, quantity: number, modifiers: SelectedModifier[] = [], notes?: string): void {
     const modifierTotal = modifiers.reduce((sum, m) => sum + m.option.price, 0);
-    const unitPrice = product.price + modifierTotal;
+    const unitPrice = parseFloat(product.price) + modifierTotal;
     const itemId = this.generateItemId(product, modifiers);
 
     this.cartState.update((state) => {
