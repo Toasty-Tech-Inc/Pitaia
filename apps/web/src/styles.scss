@@ -30,6 +30,10 @@ tui-root {
   min-height: 100vh;
 }
 
+[tuiCardMedium],[tuiCardLarge] {
+  overscroll-behavior: initial !important;
+}
+
 // Estilos de foco visíveis para acessibilidade
 :focus-visible {
   outline: 2px solid var(--tui-border-focus);

@@ -6,7 +6,7 @@ export interface Product {
   description?: string;
   sku?: string;
   barcode?: string;
-  price: number;
+  price: string;
   cost?: number;
   trackInventory: boolean;
   currentStock?: number;
