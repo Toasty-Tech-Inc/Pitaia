@@ -1,3 +1,4 @@
+import { UserService } from '../../../../services/user.service';
 import { ChangeDetectionStrategy, Component, signal, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TuiButton, TuiDialogService, TuiIcon, TuiLoader } from '@taiga-ui/core';
@@ -9,7 +10,7 @@ import { PageHeaderComponent } from '../../../../shared/components/page-header/p
 import { DataTableComponent, TableColumn } from '../../../../shared/components/data-table/data-table.component';
 import { CashierService } from '../../../../core/services/cashier.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { Cashier, CashMovement, CashierStatus, MovementType } from '../../../../core/models/cashier.model';
+import { Cashier, CashMovement, MovementType } from '../../../../core/models/cashier.model';
 import { OpenCashierDialogComponent } from '../../components/open-cashier-dialog/open-cashier-dialog.component';
 import { CloseCashierDialogComponent } from '../../components/close-cashier-dialog/close-cashier-dialog.component';
 import { CashMovementDialogComponent } from '../../components/cash-movement-dialog/cash-movement-dialog.component';
@@ -284,11 +285,13 @@ import { CashMovementDialogComponent } from '../../components/cash-movement-dial
 })
 export class CashierPageComponent implements OnInit {
   private cashierService = inject(CashierService);
+  private userService = inject(UserService)
   private notificationService = inject(NotificationService);
   private dialogService = inject(TuiDialogService);
 
   protected MovementType = MovementType;
   protected loading = signal(false);
+  protected establishment = this.userService.getEstablishment();
   protected loadingMovements = signal(false);
   protected currentCashier = signal<Cashier | null>(null);
   protected movements = signal<CashMovement[]>([]);
@@ -296,7 +299,7 @@ export class CashierPageComponent implements OnInit {
   protected currentBalance = computed(() => {
     const cashier = this.currentCashier();
     if (!cashier) return 0;
-    return cashier.openingBalance + this.totalSales() + this.totalDeposits() - this.totalWithdrawals() - this.totalRefunds();
+    return cashier.openingAmount + this.totalSales() + this.totalDeposits() - this.totalWithdrawals() - this.totalRefunds();
   });
 
   protected totalSales = computed(() => 
@@ -352,13 +355,13 @@ export class CashierPageComponent implements OnInit {
 
   loadCashier(): void {
     this.loading.set(true);
-    // TODO: Get establishmentId from user service
-    const establishmentId = 'your-establishment-id';
-    
-    this.cashierService.getCurrent(establishmentId).subscribe({
+
+    this.cashierService.getActiveSession().subscribe({
       next: (cashier) => {
         this.currentCashier.set(cashier);
-        this.loadMovements(cashier.id);
+        if (cashier) {
+          this.loadMovements(cashier.id);
+        }
         this.loading.set(false);
       },
       error: () => {

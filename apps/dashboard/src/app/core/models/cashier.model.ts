@@ -2,16 +2,19 @@ export interface Cashier {
   id: string;
   establishmentId: string;
   userId: string;
-  openingBalance: number;
-  closingBalance?: number;
-  expectedBalance?: number;
+  openingAmount: number;
+  closingAmount?: number;
+  expectedAmount?: number;
   difference?: number;
   status: CashierStatus;
   openedAt: Date;
   closedAt?: Date;
   notes?: string;
   movements?: CashMovement[];
-  user?: any;
+  user?: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface CashMovement {

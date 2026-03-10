@@ -33,11 +33,11 @@ export interface CloseCashierDialogData {
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label for="closingBalance" tuiLabel>Valor Contado (R$) *</label>
+          <label for="closingAmount" tuiLabel>Valor Contado (R$) *</label>
           <tui-textfield>
             <input
               tuiTextfield
-              formControlName="closingBalance"
+              formControlName="closingAmount"
               type="number"
               step="0.01"
               min="0"
@@ -47,7 +47,7 @@ export interface CloseCashierDialogData {
           </tui-textfield>
           <tui-error
             [error]="(['required', 'min'] | tuiFieldError | async)"
-            formControlName="closingBalance"
+            formControlName="closingAmount"
           />
         </div>
 
@@ -188,13 +188,13 @@ export class CloseCashierDialogComponent {
   protected difference = signal(0);
 
   protected form: FormGroup = this.fb.group({
-    closingBalance: [0, [Validators.required, Validators.min(0)]],
+    closingAmount: [0, [Validators.required, Validators.min(0)]],
     notes: [''],
   });
 
   updateDifference(): void {
-    const closingBalance = this.form.get('closingBalance')?.value || 0;
-    this.difference.set(closingBalance - this.context.data.expectedBalance);
+    const closingAmount = this.form.get('closingAmount')?.value || 0;
+    this.difference.set(closingAmount - this.context.data.expectedBalance);
   }
 
   onSubmit(): void {
@@ -204,7 +204,7 @@ export class CloseCashierDialogComponent {
     const cashier = this.context.data.cashier;
 
     this.cashierService.close(cashier.id, {
-      closingBalance: this.form.value.closingBalance,
+      closingAmount: this.form.value.closingAmount,
       notes: this.form.value.notes,
     }).subscribe({
       next: () => {

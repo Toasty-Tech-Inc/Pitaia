@@ -1,3 +1,4 @@
+import { UserService } from '../../../../services/user.service';
 import { POLYMORPHEUS_CONTEXT } from '@taiga-ui/polymorpheus';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -27,11 +28,11 @@ import { Cashier } from '../../../../core/models/cashier.model';
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label for="openingBalance" tuiLabel>Valor Inicial (R$) *</label>
+          <label for="openingAmount" tuiLabel>Valor Inicial (R$) *</label>
           <tui-textfield>
             <input
               tuiTextfield
-              formControlName="openingBalance"
+              formControlName="openingAmount"
               type="number"
               step="0.01"
               min="0"
@@ -40,7 +41,7 @@ import { Cashier } from '../../../../core/models/cashier.model';
           </tui-textfield>
           <tui-error
             [error]="(['required', 'min'] | tuiFieldError | async)"
-            formControlName="openingBalance"
+            formControlName="openingAmount"
           />
         </div>
 
@@ -121,25 +122,30 @@ import { Cashier } from '../../../../core/models/cashier.model';
 export class OpenCashierDialogComponent {
   private fb = inject(FormBuilder);
   private cashierService = inject(CashierService);
+  private userService = inject(UserService);
   readonly context = inject<TuiDialogContext<Cashier | null>>(POLYMORPHEUS_CONTEXT);
 
   protected saving = signal(false);
 
   protected form: FormGroup = this.fb.group({
-    openingBalance: [0, [Validators.required, Validators.min(0)]],
+    openingAmount: [0, [Validators.required, Validators.min(0)]],
     notes: [''],
   });
 
   onSubmit(): void {
     if (this.form.invalid) return;
 
+    const establishment = this.userService.getEstablishment()();
+    const user = this.userService.getUserInfo()();
+
+    if (!establishment || !user) return;
+
     this.saving.set(true);
-    // TODO: Get establishmentId from user service
-    const establishmentId = 'your-establishment-id';
 
     this.cashierService.open({
-      establishmentId,
-      openingBalance: this.form.value.openingBalance,
+      establishmentId: establishment.id,
+      userId: user.id,
+      openingAmount: this.form.value.openingAmount,
       notes: this.form.value.notes,
     }).subscribe({
       next: (cashier) => {

@@ -12,6 +12,7 @@ import { KanbanColumnComponent, KanbanColumn } from '../../components/kanban-col
 import { OrdersService } from '../../../../core/services/orders.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Order, OrderStatus, OrderType } from '../../../../core/models/order.model';
+import { UserService } from '../../../../services/user.service';
 
 @Component({
   selector: 'app-orders-list',
@@ -410,12 +411,14 @@ import { Order, OrderStatus, OrderType } from '../../../../core/models/order.mod
 })
 export class OrdersListComponent implements OnInit {
   private ordersService = inject(OrdersService);
+  private userService = inject(UserService)
   private notificationService = inject(NotificationService);
   private router = inject(Router);
 
   protected readonly OrderType = OrderType;
 
   loading = signal(true);
+  protected establishment = this.userService.getEstablishment();
   allOrders = signal<Order[]>([]);
   columns = signal<KanbanColumn[]>([]);
   selectedType = signal<OrderType | null>(null);
@@ -435,7 +438,7 @@ export class OrdersListComponent implements OnInit {
   loadOrders(): void {
     this.loading.set(true);
     const params: { establishmentId?: string; type?: OrderType } = {
-      establishmentId: 'current', // TODO: Get from UserService
+      establishmentId: this.establishment()?.id,
     };
 
     const currentType = this.selectedType();

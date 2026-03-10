@@ -13,41 +13,46 @@ export class CashierService {
   getAll(params?: PaginationParams & {
     establishmentId?: string;
     userId?: string;
-    status?: string;
+    isOpen?: boolean;
+    startDate?: string;
+    endDate?: string;
   }): Observable<PaginatedResponse<Cashier>> {
-    return this.api.getPaginated<Cashier>('/cashier', params);
+    return this.api.getPaginated<Cashier>('/cashier-sessions', params);
   }
 
-  getCurrent(establishmentId: string): Observable<Cashier> {
-    return this.api.getData<Cashier>(`/cashier/current/${establishmentId}`);
+  getActiveSession(): Observable<Cashier> {
+    return this.api.getData<Cashier>('/cashier-sessions/active');
   }
 
   getById(id: string): Observable<Cashier> {
-    return this.api.getData<Cashier>(`/cashier/${id}`);
+    return this.api.getData<Cashier>(`/cashier-sessions/${id}`);
   }
 
-  open(data: { establishmentId: string; openingBalance: number; notes?: string }): Observable<Cashier> {
-    return this.api.postData<Cashier>('/cashier/open', data);
+  open(data: { establishmentId: string; userId: string; openingAmount: number; notes?: string }): Observable<Cashier> {
+    return this.api.postData<Cashier>('/cashier-sessions/open', data);
   }
 
-  close(id: string, data: { closingBalance: number; notes?: string }): Observable<Cashier> {
-    return this.api.postData<Cashier>(`/cashier/${id}/close`, data);
+  close(id: string, data: { closingAmount: number; notes?: string }): Observable<Cashier> {
+    return this.api.postData<Cashier>(`/cashier-sessions/${id}/close`, data);
   }
 
-  addMovement(cashierId: string, movement: {
+  addMovement(cashierSessionId: string, movement: {
     type: MovementType;
     amount: number;
     description?: string;
     paymentMethod?: string;
   }): Observable<CashMovement> {
-    return this.api.postData<CashMovement>(`/cashier/${cashierId}/movements`, movement);
+    return this.api.postData<CashMovement>('/cashier-sessions/movements', {
+      cashierSessionId,
+      ...movement,
+    });
   }
 
-  getMovements(cashierId: string): Observable<CashMovement[]> {
-    return this.api.getData<CashMovement[]>(`/cashier/${cashierId}/movements`);
+  getMovements(cashierSessionId: string): Observable<CashMovement[]> {
+    return this.api.getData<CashMovement[]>(`/cashier-sessions/${cashierSessionId}/movements`);
   }
 
-  getReport(cashierId: string): Observable<{
+  getReport(cashierSessionId: string): Observable<{
     cashier: Cashier;
     summary: {
       totalSales: number;
@@ -59,6 +64,6 @@ export class CashierService {
     movementsByType: Record<string, number>;
     movementsByPaymentMethod: Record<string, number>;
   }> {
-    return this.api.getData(`/cashier/${cashierId}/report`);
+    return this.api.getData(`/cashier-sessions/${cashierSessionId}/report`);
   }
 }
