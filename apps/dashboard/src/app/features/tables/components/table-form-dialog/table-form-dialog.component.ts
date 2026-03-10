@@ -8,6 +8,7 @@ import { TuiDialogContext } from '@taiga-ui/core';
 import { TablesService } from '../../../../core/services/tables.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Table, TableStatus } from '../../../../core/models/table.model';
+import { UserService } from '../../../../services/user.service';
 
 export interface TableFormDialogData {
   table?: Table;
@@ -146,10 +147,12 @@ export class TableFormDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   private tablesService = inject(TablesService);
   private notificationService = inject(NotificationService);
+  private userService = inject(UserService);
   readonly context = inject<TuiDialogContext<Table | null, TableFormDialogData>>(POLYMORPHEUS_CONTEXT);
 
   protected saving = signal(false);
   protected isEditing = false;
+  protected establishment = this.userService.getEstablishment()
 
   protected form: FormGroup = this.fb.group({
     number: ['', Validators.required],
@@ -173,6 +176,7 @@ export class TableFormDialogComponent implements OnInit {
     const data = {
       ...this.form.value,
       status: this.isEditing ? undefined : TableStatus.AVAILABLE,
+      establishmentId: this.establishment()!.id,
     };
     const table = this.context.data?.table;
 
