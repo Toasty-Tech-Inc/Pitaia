@@ -30,7 +30,7 @@ tui-root {
   min-height: 100vh;
 }
 
-[tuiCardMedium][tuiCardLarge] {
+[tuiCardMedium],[tuiCardLarge] {
   overscroll-behavior: initial !important;
 }
 
