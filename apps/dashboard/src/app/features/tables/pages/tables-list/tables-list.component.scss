@@ -1,0 +1,127 @@
+    .tables-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .stat-card tui-icon {
+      width: 2rem;
+      height: 2rem;
+    }
+
+    .stat-card.available tui-icon { color: #38D9A9; }
+    .stat-card.occupied tui-icon { color: #FE3867; }
+    .stat-card.reserved tui-icon { color: #FFC107; }
+    .stat-card.cleaning tui-icon { color: #03A9F4; }
+
+    .stat-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--tui-text-secondary);
+    }
+
+    .tables-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .table-card {
+      padding: 1.25rem;
+      border-left: 4px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .table-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-card.available { border-left-color: #38D9A9; }
+    .table-card.occupied { border-left-color: #FE3867; }
+    .table-card.reserved { border-left-color: #FFC107; }
+    .table-card.cleaning { border-left-color: #03A9F4; }
+    .table-card.inactive { opacity: 0.6; }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .table-number {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .table-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--tui-text-secondary);
+    }
+
+    .info-item tui-icon {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 0.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--tui-border-normal);
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      text-align: center;
+    }
+
+    .empty-state tui-icon {
+      width: 3rem;
+      height: 3rem;
+      color: var(--tui-text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+      margin-bottom: 1rem;
+      color: var(--tui-text-secondary);
+    }
+
+    .pitaia-primary-btn {
+      background: linear-gradient(135deg, #FE3867 0%, #FF6B8A 100%);
+      color: white;
+    }

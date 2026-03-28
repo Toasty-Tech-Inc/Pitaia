@@ -47,7 +47,7 @@ interface SalesSummary {
       <!-- Date Filters -->
       <div tuiCardLarge class="filters-card">
         <div class="filter-group">
-          <label>Data Inicial</label>
+          <label for="startDate">Data Inicial</label>
           <tui-textfield>
             <input
               tuiTextfield
@@ -57,7 +57,7 @@ interface SalesSummary {
           </tui-textfield>
         </div>
         <div class="filter-group">
-          <label>Data Final</label>
+          <label for="endDate">Data Final</label>
           <tui-textfield>
             <input
               tuiTextfield
@@ -168,152 +168,7 @@ interface SalesSummary {
       }
     </app-layout>
   `,
-  styles: [`
-    .filters-card {
-      display: flex;
-      align-items: flex-end;
-      gap: 1rem;
-      padding: 1rem 1.5rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-    }
-
-    .filter-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .filter-group label {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--tui-text-secondary);
-    }
-
-    .loading-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 300px;
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .summary-card {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.25rem;
-    }
-
-    .summary-card tui-icon {
-      width: 2.5rem;
-      height: 2.5rem;
-      color: #FE3867;
-    }
-
-    .summary-content {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .summary-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-
-    .summary-label {
-      font-size: 0.875rem;
-      color: var(--tui-text-secondary);
-    }
-
-    .charts-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .chart-card {
-      padding: 1.5rem;
-    }
-
-    .chart-card h4 {
-      margin: 0 0 1.25rem;
-      font-size: 1rem;
-      font-weight: 600;
-    }
-
-    .chart-bars {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .bar-item {
-      display: grid;
-      grid-template-columns: 100px 1fr 80px;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .bar-label {
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-
-    .bar-container {
-      height: 0.5rem;
-      background: var(--tui-background-neutral-1);
-      border-radius: 0.25rem;
-      overflow: hidden;
-    }
-
-    .bar-fill {
-      height: 100%;
-      background: linear-gradient(135deg, #FE3867 0%, #FF6B8A 100%);
-      border-radius: 0.25rem;
-      transition: width 0.3s ease;
-    }
-
-    .bar-value {
-      font-size: 0.875rem;
-      font-weight: 600;
-      text-align: right;
-    }
-
-    .status-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .status-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .status-count {
-      font-weight: 600;
-    }
-
-    .section-title {
-      margin: 0 0 1rem;
-      font-size: 1.125rem;
-      font-weight: 600;
-    }
-
-    .pitaia-primary-btn {
-      background: linear-gradient(135deg, #FE3867 0%, #FF6B8A 100%);
-      color: white;
-    }
-  `],
+  styleUrls: ['./sales-report.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SalesReportComponent implements OnInit {

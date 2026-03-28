@@ -16,7 +16,6 @@ export interface TableFormDialogData {
 
 @Component({
   selector: 'app-table-form-dialog',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -104,43 +103,7 @@ export interface TableFormDialogData {
       </form>
     </div>
   `,
-  styles: [`
-    .table-form-dialog {
-      padding: 1.5rem;
-      min-width: 350px;
-    }
-
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      cursor: pointer;
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 0.75rem;
-      justify-content: flex-end;
-      margin-top: 1.5rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--tui-border-normal);
-    }
-
-    .pitaia-primary-btn {
-      background: linear-gradient(135deg, #FE3867 0%, #FF6B8A 100%);
-      color: white;
-    }
-  `],
+  styleUrls: ['./table-form-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableFormDialogComponent implements OnInit {

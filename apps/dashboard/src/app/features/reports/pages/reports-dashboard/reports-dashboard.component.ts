@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { TuiButton, TuiIcon } from '@taiga-ui/core';
 import { TuiCardLarge } from '@taiga-ui/layout';
 import { LayoutComponent } from '../../../../shared/components/layout/layout.component';
 import { PageHeaderComponent } from '../../../../shared/components/page-header/page-header.component';
 import { OrdersService } from '../../../../core/services/orders.service';
 import { CustomersService } from '../../../../core/services/customers.service';
 import { ProductsService } from '../../../../core/services/products.service';
+import { TuiIcon } from '@taiga-ui/core';
 
 interface ReportCard {
   title: string;
@@ -24,7 +24,6 @@ interface ReportCard {
     CommonModule,
     LayoutComponent,
     PageHeaderComponent,
-    TuiButton,
     TuiCardLarge,
     TuiIcon,
   ],
@@ -93,6 +92,9 @@ interface ReportCard {
           <div 
             tuiCardLarge 
             class="report-card"
+            (keydown.enter)="navigateToReport(report.route)"
+            tabindex="0"
+            (keyup.enter)="navigateToReport(report.route)"
             (click)="navigateToReport(report.route)"
           >
             <div class="report-icon" [style.background]="report.color">
@@ -108,130 +110,7 @@ interface ReportCard {
       </div>
     </app-layout>
   `,
-  styles: [`
-    .overview-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .overview-card {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.25rem;
-    }
-
-    .overview-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 3rem;
-      height: 3rem;
-      border-radius: 0.75rem;
-    }
-
-    .overview-icon tui-icon {
-      width: 1.5rem;
-      height: 1.5rem;
-      color: white;
-    }
-
-    .overview-icon.sales { background: linear-gradient(135deg, #38D9A9 0%, #20C997 100%); }
-    .overview-icon.orders { background: linear-gradient(135deg, #FE3867 0%, #FF6B8A 100%); }
-    .overview-icon.ticket { background: linear-gradient(135deg, #748FFC 0%, #5C7CFA 100%); }
-    .overview-icon.customers { background: linear-gradient(135deg, #FFC107 0%, #FFB300 100%); }
-
-    .overview-content {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .overview-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--tui-text-primary);
-    }
-
-    .overview-label {
-      font-size: 0.875rem;
-      color: var(--tui-text-secondary);
-    }
-
-    .overview-trend {
-      font-size: 0.75rem;
-      font-weight: 500;
-      margin-top: 0.25rem;
-    }
-
-    .overview-trend.positive { color: #38D9A9; }
-    .overview-trend.negative { color: #FE3867; }
-
-    .section-title {
-      margin: 0 0 1rem;
-      font-size: 1.125rem;
-      font-weight: 600;
-    }
-
-    .reports-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1rem;
-    }
-
-    .report-card {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.25rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .report-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .report-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 3rem;
-      height: 3rem;
-      border-radius: 0.75rem;
-      flex-shrink: 0;
-    }
-
-    .report-icon tui-icon {
-      width: 1.5rem;
-      height: 1.5rem;
-      color: white;
-    }
-
-    .report-content {
-      flex: 1;
-    }
-
-    .report-content h4 {
-      margin: 0 0 0.25rem;
-      font-size: 1rem;
-      font-weight: 600;
-    }
-
-    .report-content p {
-      margin: 0;
-      font-size: 0.875rem;
-      color: var(--tui-text-secondary);
-    }
-
-    .arrow-icon {
-      color: var(--tui-text-secondary);
-      width: 1.25rem;
-      height: 1.25rem;
-    }
-  `],
+  styleUrls: ['./reports-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportsDashboardComponent implements OnInit {
